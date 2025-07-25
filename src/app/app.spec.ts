@@ -8,16 +8,19 @@ describe('App', () => {
     }).compileComponents();
   });
 
+  afterEach(() => {
+    TestBed.resetTestingModule();
+  });
+
   it('should create the app', () => {
     const fixture = TestBed.createComponent(App);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
 
-  it('should render title', () => {
+  it('should have title property', () => {
     const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, my-portfolio');
+    const app = fixture.componentInstance;
+    expect(app.title).toBe('My Professional Portfolio');
   });
 });

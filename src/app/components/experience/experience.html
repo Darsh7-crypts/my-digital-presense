@@ -1,0 +1,45 @@
+<!-- src/app/components/experience/experience.component.html -->
+<section id="experience" class="section">
+  <h2>Professional Experience</h2>
+  <div class="timeline-compact">
+    <div *ngFor="let job of experience; let i = index" 
+         class="timeline-item-compact" 
+         [attr.data-index]="i"
+         [class.expanded]="isExpanded(job.id)"
+         (click)="toggleAccordion(job.id)">
+      
+      <div class="job-header-compact">
+        <div class="job-title-container">
+          <h3>{{ job.jobTitle }}</h3>
+          <div class="period-badge">{{ job.period }}</div>
+        </div>
+        
+        <div class="company-info-compact">
+          <div class="company-container">
+            <span class="company-name">{{ job.company }}</span>
+            <span class="sub-company" *ngIf="job.id !== 1 && job.subCompany">(via {{ job.subCompany }})</span>
+          </div>
+          <span class="location">📍 {{ job.location }}</span>
+        </div>
+      </div>
+
+      <div class="job-content-compact" *ngIf="isExpanded(job.id)">
+        <div class="tech-stack" *ngIf="getTechStack(job.jobTitle)">
+          <div class="tech-chip" *ngFor="let tech of getTechStack(job.jobTitle)">{{ tech }}</div>
+        </div>
+        
+        <div class="achievements-compact">
+          <h5><span class="achievement-icon">🚀</span> Key Achievements</h5>
+          <ul class="achievement-list">
+            <li *ngFor="let detail of job.details; let j = index">
+              {{ detail }}
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="accordion-indicator">
+        <span class="indicator-icon">{{ isExpanded(job.id) ? '−' : '+' }}</span>
+      </div>
+    </div>
+  </div>
+</section>

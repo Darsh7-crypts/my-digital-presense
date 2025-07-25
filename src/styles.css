@@ -1,1 +1,60 @@
 /* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  /* Unified background for entire application */
+  background: #000000;
+  background-attachment: fixed;
+  min-height: 100vh;
+  color: #ffffff;
+}
+
+/* Global CSS reset */
+* {
+  box-sizing: border-box;
+}
+
+/* Reduce default margins and padding for common elements */
+h1, h2, h3, h4, h5, h6, p, ul, ol, li {
+  margin: 0;
+  padding: 0;
+}
+
+/* Set consistent spacing for typography */
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: 0.5rem;
+}
+
+p {
+  margin-bottom: 0.75rem;
+}
+
+/* Responsive spacing adjustments */
+@media (max-width: 768px) {
+  .section-container {
+    padding: 0.5rem 0 !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .container {
+    padding: 0 10px !important;
+  }
+  
+  /* Reduce section padding on mobile */
+  [class*="-section"] {
+    padding: 20px 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-container {
+    padding: 0.25rem 0 !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  .container {
+    padding: 0 5px !important;
+  }
+}

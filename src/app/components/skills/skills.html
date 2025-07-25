@@ -1,0 +1,49 @@
+<section class="skills-section" id="skills">
+  <div class="container">
+    <!-- Section Header -->
+    <div class="section-header">
+      <h2 class="section-title">
+        <span class="title-icon">💻</span>
+        Technical Skills
+      </h2>
+      <p class="section-description">
+        A comprehensive overview of my technical expertise across various technologies and tools.
+      </p>
+    </div>
+
+    <!-- Skills Filter -->
+    <div class="skills-filter">
+
+      @for (category of skillCategories; track category.title) {
+        <button class="filter-btn" [class.active]="activeCategory === category.title" (click)="activeCategory = category.title">
+          <span class="btn-icon">{{ category.icon }}</span>
+          {{ category.title }}
+        </button>
+      }
+    </div>
+
+    <!-- Skills Categories -->
+    <div class="skills-container">
+      @for (category of skillCategories; track category.title) {
+        @if (activeCategory === 'all' || activeCategory === category.title) {
+          <div class="skill-category" [class.visible]="activeCategory === 'all' || activeCategory === category.title">
+            <h3 class="category-title">{{ category.title }}</h3>
+            <div class="skills-grid">
+              @for (skill of category.skills; track skill.name) {
+                <div class="skill-card">
+                  <div class="skill-header">
+                    <div class="skill-icon">{{ skill.icon }}</div>
+                    <div class="skill-info">
+                      <h4 class="skill-name">{{ skill.name }}</h4>
+                    
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</section>

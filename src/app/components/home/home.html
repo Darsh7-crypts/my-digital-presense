@@ -1,0 +1,76 @@
+<section class="home-section">
+  <div class="container">
+    <div class="home-content">
+      <!-- Hero Section with Two Column Layout -->
+      <div class="hero-section">
+        <!-- Left Side: Text and Animated Intro -->
+        <div class="hero-left">
+        
+          <!-- Animated Running Text -->
+          <div class="animated-intro">
+            <div class="running-text">
+              <div class="text-content">
+                @for (line of textLines; track $index) {
+                <div class="text-line" [class.work-line]="isWorkLine($index)">
+                  {{ line }}
+                  @if ($index === textLines.length - 1) {
+                  <span class="cursor" [class.blink]="shouldShowCursor">|</span>
+                  }
+                </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Photo -->
+        <div class="hero-right">
+          <div class="photo-container">
+            <div class="photo-frame">
+              <img src="images/profile.jpg" alt="Profile Photo" class="profile-photo">
+              <div class="photo-overlay"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Home Body Content -->
+      <div class="home-body">
+        <div class="home-text">
+          <div class="intro-paragraph">
+            <p>
+                Hello! I'm a dedicated Software Developer focused on building innovative digital solutions. Currently at Siemens Technology, I specialize in developing scalable web applications and industrial IoT platforms.
+            </p>
+          </div>
+
+          <div class="details-grid">
+            <div class="detail-item">
+              <h3>What I Do</h3>
+              <p>
+                I craft modern, responsive web applications using cutting-edge technologies.
+                My expertise spans from frontend frameworks like Angular architecture.
+              </p>
+            </div>
+
+            <div class="detail-item">
+              <h3>My Approach</h3>
+              <p>
+                I believe in writing clean, maintainable code and following best practices.
+                I'm passionate home user experience, performance optimization, and
+                creating solutions that make a real impact.
+              </p>
+            </div>
+
+            <div class="detail-item">
+              <h3>Beyond Code</h3>
+              <p>
+                When I'm not coding, I enjoy exploring new technologies, contributing to
+                open-source projects, and mentoring aspiring developers. I'm always
+                excited to take on new challenges and learn something new.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

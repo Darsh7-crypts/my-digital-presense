@@ -1,59 +1,168 @@
-# MyPortfolio
+# 🚀 Angular Portfolio
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.5.
+A modern, responsive portfolio website built with Angular 20, featuring server-side rendering (SSR) and a clean, professional design. This portfolio showcases professional experience, education, technical skills, achievements, and project highlights.
 
-## Development server
+![Angular](https://img.shields.io/badge/Angular-20.0-red?style=flat-square&logo=angular)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue?style=flat-square&logo=typescript)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-purple?style=flat-square&logo=bootstrap)
+![Angular Material](https://img.shields.io/badge/Angular%20Material-20.1-blue?style=flat-square&logo=material-ui)
 
-To start a local development server, run:
+## ✨ Features
 
-```bash
-ng serve
+- **📱 Responsive Design** - Optimized for desktop, tablet, and mobile devices
+- **⚡ Server-Side Rendering (SSR)** - Fast initial page loads and SEO optimization
+- **🎨 Modern UI/UX** - Clean, professional design with Angular Material components
+- **📊 Interactive Sections** - Dynamic content for projects, skills, and experience
+- **🎯 Component-Based Architecture** - Modular and maintainable code structure
+- **🔧 TypeScript** - Type-safe development with full TypeScript support
+
+## 🏗️ Project Structure
+
+```
+src/
+├── app/
+│   ├── components/
+│   │   ├── about/          # About section component
+│   │   ├── achievement/    # Achievements showcase
+│   │   ├── contact/        # Contact information
+│   │   ├── education/      # Education timeline
+│   │   ├── experience/     # Professional experience
+│   │   ├── header/         # Navigation header
+│   │   ├── home/           # Landing/hero section
+│   │   ├── projects/       # Project portfolio
+│   │   └── skills/         # Technical skills
+│   └── services/
+│       └── portfolio-data.ts # Portfolio data service
+├── assets/                 # Static assets
+└── public/                 # Public assets
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## 🚀 Quick Start
 
-## Code scaffolding
+### Prerequisites
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- Node.js (version 18 or higher)
+- npm or yarn package manager
+- Angular CLI (optional, but recommended)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd my-portfolio
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Start development server**
+   ```bash
+   npm start
+   ```
+   
+   Navigate to `http://localhost:4200/` in your browser. The application will automatically reload when you make changes.
+
+## 🛠️ Available Scripts
+
+- **`npm start`** - Start development server
+- **`npm run build`** - Build for production
+- **`npm test`** - Run unit tests
+- **`npm run watch`** - Build in watch mode
+- **`npm run serve:ssr:my-portfolio`** - Serve SSR build
+
+## 🏗️ Building for Production
+
+To build the project for production:
 
 ```bash
-ng generate component component-name
+npm run build
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+The build artifacts will be stored in the `dist/` directory, optimized for performance and speed.
+
+### Server-Side Rendering (SSR)
+
+This project includes SSR support for improved performance and SEO:
 
 ```bash
-ng generate --help
+npm run build
+npm run serve:ssr:my-portfolio
 ```
 
-## Building
+## 🧪 Testing
 
-To build the project run:
+Run unit tests with Karma:
 
 ```bash
-ng build
+npm test
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+The project includes comprehensive test coverage for all components and services.
 
-## Running unit tests
+## 🛠️ Tech Stack
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+- **Frontend Framework**: Angular 20
+- **Language**: TypeScript 5.8
+- **UI Framework**: Angular Material 20.1 + Bootstrap 5.3
+- **Styling**: CSS3 with component-scoped styles
+- **Build Tool**: Angular CLI
+- **Testing**: Jasmine + Karma
+- **SSR**: Angular Universal
 
-```bash
-ng test
+## 📱 Responsive Design
+
+The portfolio is fully responsive and optimized for:
+- **Desktop** (1200px+)
+- **Tablet** (768px - 1199px)
+- **Mobile** (< 768px)
+
+## 🎨 Customization
+
+### Portfolio Data
+Update your personal information in `src/app/services/portfolio-data.ts`:
+
+```typescript
+// Update with your information
+export const portfolioData = {
+  personal: { /* your details */ },
+  experience: [ /* your experience */ ],
+  projects: [ /* your projects */ ],
+  skills: [ /* your skills */ ]
+};
 ```
 
-## Running end-to-end tests
+### Styling
+- Global styles: `src/styles.css`
+- Component styles: Individual `.css` files for each component
+- Theme customization: Angular Material theming in `src/app/app.css`
 
-For end-to-end (e2e) testing, run:
+## 🌐 Deployment
 
-```bash
-ng e2e
-```
+The project can be deployed to various platforms:
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+- **Netlify/Vercel**: Deploy the `dist/` folder
+- **GitHub Pages**: Use Angular CLI deployment tools
+- **Traditional hosting**: Upload the built files to your web server
 
-## Additional Resources
+## 🤝 Contributing
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## 📞 Contact
+
+Feel free to reach out if you have any questions or suggestions!
+
+---
+
+Built with ❤️ using Angular

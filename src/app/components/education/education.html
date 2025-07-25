@@ -1,0 +1,22 @@
+<section class="education-section">
+  <div class="container">
+    <h2 class="section-title">Education</h2>
+    <div class="education-timeline">
+      @for (education of educationData; track education.id) {
+        <div class="education-item">
+          <div class="education-card">
+            <div class="education-header">
+              <h3 class="degree">{{ education.degree }}</h3>
+              <span class="period">{{ education.period }}</span>
+            </div>
+            
+            <div class="institution-info">
+              <h4 class="institution">{{ education.institution }}</h4>
+              <p class="location">📍 {{ education.location }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

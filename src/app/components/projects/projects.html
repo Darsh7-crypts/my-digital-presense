@@ -1,0 +1,60 @@
+
+<!-- src/app/components/projects/projects.component.html -->
+<section id="projects" class="projects-section">
+  <div class="container">
+    <div class="section-header text-center">
+      <h2 class="section-title">Projects</h2>
+      <p class="section-subtitle">Explore my latest work and technical achievements</p>
+    </div>
+
+    <!-- Projects Container -->
+    <div class="projects-container">
+      <div *ngFor="let project of filteredProjects; let i = index" 
+           class="project-item" 
+           [attr.data-index]="i"
+           [class.expanded]="isExpanded(project.id)"
+           (click)="toggleAccordion(project.id, $event)">
+        
+        <div class="project-header">
+          <div class="project-title-container">
+            <h3>{{ project.title }}</h3>
+            <div class="project-status-badge" [class]="'status-' + project.status.toLowerCase()">
+              {{ project.status }}
+            </div>
+          </div>
+          
+          <div class="project-meta-info">
+            <span class="project-category">{{ project.category }}</span>
+            <span class="project-duration">
+              <i class="fas fa-clock"></i>
+              {{ project.duration }}
+            </span>
+          </div>
+        </div>
+
+        <div class="project-content" [class.visible]="isExpanded(project.id)">
+          <!-- Project Description -->
+          <p class="project-description">{{ project.description }}</p>
+
+          <!-- Key Features -->
+          <div class="features-section">
+            <h6 class="features-title"><span class="feature-icon">🔑</span> Key Features</h6>
+            <ul class="features-list">
+              <li *ngFor="let feature of project.features">{{ feature }}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="accordion-indicator">
+          <span class="indicator-icon">{{ isExpanded(project.id) ? '−' : '+' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="filteredProjects.length === 0" class="empty-state text-center">
+      <i class="fas fa-search fa-3x mb-3 text-muted"></i>
+      <h4>No projects found</h4>
+      <p class="text-muted">Try selecting a different category</p>
+    </div>
+  </div>
+</section>
