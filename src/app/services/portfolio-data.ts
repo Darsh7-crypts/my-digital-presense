@@ -1,5 +1,42 @@
-// src/app/services/portfolio-data.service.ts
 import { Injectable } from '@angular/core';
+
+export interface ExperienceItem {
+  id: number;
+  jobTitle: string;
+  company: string;
+  subCompany: string;
+  location: string;
+  period: string;
+  details: string[];
+}
+
+export interface Project {
+  id: number;
+  title: string;
+  category: string;
+  technologies: string[];
+  description: string;
+  features: string[];
+  duration: string;
+  status: string;
+  image: string;
+  demoLink: string;
+  codeLink: string;
+  achievements: string;
+}
+
+export interface Achievement {
+  id: number;
+  title: string;
+  description: string;
+  date: string;
+  category: string;
+  issuer: string;
+  icon: string;
+  skills: string[];
+  credentialId: string;
+  verificationLink: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +45,7 @@ export class PortfolioDataService {
 
   constructor() { }
 
-  getExperience() {
+  getExperience(): ExperienceItem[] {
     return [
       {
         id: 1,
@@ -72,7 +109,7 @@ export class PortfolioDataService {
     ];
   }
 
-  getProjects() {
+  getProjects(): Project[] {
     return [
       {
         id: 1,
@@ -134,7 +171,7 @@ export class PortfolioDataService {
     ];
   }
 
-  getAchievements() {
+  getAchievements(): Achievement[] {
     return [
       {
         id: 1,

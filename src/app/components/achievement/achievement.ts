@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PortfolioDataService } from '../../services/portfolio-data';
+import { PortfolioDataService, Achievement as AchievementType } from '../../services/portfolio-data';
 
 @Component({
   selector: 'app-achievement',
@@ -9,7 +9,7 @@ import { PortfolioDataService } from '../../services/portfolio-data';
   styleUrl: './achievement.css'
 })
 export class Achievement implements OnInit {
-  achievements: any[] = [];
+  achievements: AchievementType[] = [];
 
   constructor(private portfolioDataService: PortfolioDataService) { }
 

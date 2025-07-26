@@ -13,21 +13,21 @@ interface ContactInfo {
 }
 
 @Component({
-  selector: 'app-Contact',
+  selector: 'app-contact',
   imports: [],
-  templateUrl: './Contact.html',
+  templateUrl: './contact.html',
   styleUrl: './contact.css'
 })
 export class Contact {
-  currentYear = new Date().getFullYear();
+  readonly currentYear = new Date().getFullYear();
 
-  contactInfo: ContactInfo = {
+  readonly contactInfo: ContactInfo = {
     email: 'darsh.bopalkar7@gmail.com',
     phone: '+91 8007981191',
     location: 'Pune Maharashtra, India'
   };
 
-  socialLinks: SocialLink[] = [
+  readonly socialLinks: SocialLink[] = [
     {
       name: 'LinkedIn',
       url: 'https://linkedin.com/in/yourprofile',

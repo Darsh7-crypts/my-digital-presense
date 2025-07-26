@@ -1,4 +1,6 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
+
+type SectionId = 'home' | 'experience' | 'projects' | 'skills' | 'education' | 'achievement' | 'contact';
 
 @Component({
   selector: 'app-header',
@@ -6,25 +8,21 @@ import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
   templateUrl: './header.html',
   styleUrl: './header.css'
 })
-export class Header implements OnInit, OnDestroy {
-  activeSection = 'home';
+export class Header implements OnInit {
+  activeSection: SectionId = 'home';
 
-  ngOnInit() {
+  ngOnInit(): void {
     // Initialize active section detection
     this.updateActiveSection();
   }
 
-  ngOnDestroy() {
-    // Cleanup if needed
-  }
-
   @HostListener('window:scroll')
-  onWindowScroll() {
+  onWindowScroll(): void {
     this.updateActiveSection();
   }
 
-  private updateActiveSection() {
-    const sections = ['home', 'experience', 'projects', 'skills', 'education','achievement', 'contact'];
+  private updateActiveSection(): void {
+    const sections: SectionId[] = ['home', 'experience', 'projects', 'skills', 'education','achievement', 'contact'];
     const scrollPosition = window.scrollY + 100; // Offset for header height
 
     for (const section of sections) {

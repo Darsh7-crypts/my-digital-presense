@@ -22,7 +22,7 @@ interface SkillCategory {
 export class Skills {
   activeCategory: string = 'Frontend Development'; // Track active filter category
   
-  skillCategories: SkillCategory[] = [
+  readonly skillCategories: SkillCategory[] = [
     {
       title: 'Frontend Development',
       icon: '🌐',

@@ -1,24 +1,17 @@
-// src/app/components/experience/experience.component.ts
 import { Component, OnInit } from '@angular/core';
-import { PortfolioDataService } from '../../services/portfolio-data';
 import { CommonModule } from '@angular/common';
+import { PortfolioDataService, ExperienceItem } from '../../services/portfolio-data';
 
 @Component({
   selector: 'app-experience',
-  templateUrl: './experience.html',
   imports: [CommonModule],
-  styleUrls: ['./experience.css'],
-  standalone: true
+  templateUrl: './experience.html',
+  styleUrl: './experience.css'
 })
 export class Experience implements OnInit {
-  experience: any[] = [];
+  experience: ExperienceItem[] = [];
   expandedJob: number | null = null;
 
-  private techStackMapping: { [key: string]: string[] } = {
-    'IT Software Developer & UI/UX Designer': ['Angular', 'TypeScript', 'Micro-Frontends', 'Figma', 'UI/UX'],
-    'Frontend Developer': ['Angular', 'TypeScript', 'SASS', 'Jest', 'Office 365'],
-    'Software Engineer': ['HTML', 'CSS', 'JavaScript', 'UI Components']
-  };
 
   constructor(private portfolioDataService: PortfolioDataService) { }
 
@@ -53,10 +46,6 @@ export class Experience implements OnInit {
   private extractYear(dateStr: string): number {
     const parts = dateStr.split(' ');
     return parseInt(parts[parts.length - 1]);
-  }
-
-  getTechStack(jobTitle: string): string[] {
-    return this.techStackMapping[jobTitle] || [];
   }
 
   toggleAccordion(jobId: number): void {

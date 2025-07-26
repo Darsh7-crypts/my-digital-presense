@@ -5,7 +5,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
-import { PortfolioDataService } from '../../services/portfolio-data';
+import { PortfolioDataService, Project } from '../../services/portfolio-data';
 
 @Component({
   selector: 'app-projects',
@@ -21,8 +21,8 @@ import { PortfolioDataService } from '../../services/portfolio-data';
   styleUrl: './projects.css'
 })
 export class Projects implements OnInit, OnDestroy {
-  projects: any[] = [];
-  filteredProjects: any[] = [];
+  projects: Project[] = [];
+  filteredProjects: Project[] = [];
   selectedCategory: string = 'All';
   expandedProject: number | null = null;
   
@@ -30,13 +30,13 @@ export class Projects implements OnInit, OnDestroy {
   currentSlide: number = 0;
   visibleCards: number = 1;
   cardWidth: number = 400; // Base card width + gap
-  autoPlayInterval: any;
+  autoPlayInterval: NodeJS.Timeout | null = null;
   autoPlayEnabled: boolean = false;
 
   // Touch/Swipe properties
   private touchStartX: number = 0;
   private touchEndX: number = 0;
-  private minSwipeDistance: number = 50;
+  private readonly minSwipeDistance: number = 50;
 
   constructor(private portfolioDataService: PortfolioDataService) { }
 
@@ -107,14 +107,15 @@ export class Projects implements OnInit, OnDestroy {
     }
   }
 
-  stopAutoPlay(): void {
-    if (this.autoPlayInterval) {
-      clearInterval(this.autoPlayInterval);
-    }
-  }
-
   ngOnDestroy(): void {
     this.stopAutoPlay();
+  }
+
+  private stopAutoPlay(): void {
+    if (this.autoPlayInterval) {
+      clearInterval(this.autoPlayInterval);
+      this.autoPlayInterval = null;
+    }
   }
 
   getStatusColor(status: string): string {

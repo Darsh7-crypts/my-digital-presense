@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Contact } from './components/contact/contact';
 import { Projects } from './components/projects/projects';
@@ -25,14 +25,12 @@ import { Achievement } from './components/achievement/achievement';
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App implements OnInit, AfterViewInit {
+export class App implements OnInit {
   title = 'My Professional Portfolio';
   isLoading = false;
   showScrollButton = false;
 
-  @ViewChild('snowfall', { static: false }) snowfallContainer!: ElementRef;
-
-  ngOnInit() {
+  ngOnInit(): void {
     // Show loading initially
     this.isLoading = true;
     
@@ -42,17 +40,13 @@ export class App implements OnInit, AfterViewInit {
     }, 1500);
   }
 
-  ngAfterViewInit() {
-    // Removed snowfall initialization
-  }
-
   @HostListener('window:scroll', [])
-  onWindowScroll() {
+  onWindowScroll(): void {
     // Show scroll to top button when user scrolls down 300px
     this.showScrollButton = window.pageYOffset > 300;
   }
 
-  scrollToTop() {
+  scrollToTop(): void {
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
@@ -60,7 +54,7 @@ export class App implements OnInit, AfterViewInit {
   }
 
   // Method to scroll to specific section
-  scrollToSection(sectionId: string) {
+  scrollToSection(sectionId: string): void {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ 
@@ -69,6 +63,4 @@ export class App implements OnInit, AfterViewInit {
       });
     }
   }
-
-  // Removed snowfall animation methods
 }

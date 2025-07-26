@@ -24,11 +24,7 @@
       </div>
 
       <div class="job-content-compact" *ngIf="isExpanded(job.id)">
-        <div class="tech-stack" *ngIf="getTechStack(job.jobTitle)">
-          <div class="tech-chip" *ngFor="let tech of getTechStack(job.jobTitle)">{{ tech }}</div>
-        </div>
-        
-        <div class="achievements-compact">
+            <div class="achievements-compact">
           <h5><span class="achievement-icon">🚀</span> Key Achievements</h5>
           <ul class="achievement-list">
             <li *ngFor="let detail of job.details; let j = index">
