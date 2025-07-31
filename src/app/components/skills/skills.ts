@@ -20,9 +20,9 @@ interface SkillCategory {
   styleUrl: './skills.css'
 })
 export class Skills {
-  activeCategory: string = 'Frontend Development'; // Track active filter category
+  public activeCategory: string = 'Frontend Development'; // Track active filter category
   
-  readonly skillCategories: SkillCategory[] = [
+  public readonly skillCategories: SkillCategory[] = [
     {
       title: 'Frontend Development',
       icon: '🌐',

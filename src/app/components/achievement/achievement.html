@@ -1,8 +1,16 @@
 <!-- src/app/components/achievement/achievement.component.html -->
 <section id="achievements" class="section">
-  <h2>🏆 Achievements & Certifications</h2>
+  <h2>🏆 Achievements & Leadership</h2>
+  <div class="achievement-tabs">
+    <button *ngFor="let category of categories"
+            class="tab-btn"
+            [class.active]="activeCategory === category"
+            (click)="activeCategory = category">
+      {{ category }}
+    </button>
+  </div>
   <div class="achievements-container">
-    <div *ngFor="let achievement of achievements; let i = index" 
+    <div *ngFor="let achievement of getAchievementsByCategory(activeCategory); let i = index" 
          class="achievement-card" 
          [attr.data-index]="i">
       
@@ -11,37 +19,17 @@
           {{ achievement.icon }}
         </div>
         <div class="achievement-info">
-          <h3>{{ achievement.title }}</h3>
+          <div class="achievement-title">
+            <h3>{{ achievement.title }}</h3>
+          <p class="achievement-date" *ngIf="achievement.category !== 'Leadership'">📅 {{ achievement.date }}</p>
+          </div>
           <div class="issuer-info">
             <span class="issuer">{{ achievement.issuer }}</span>
             <span class="category">{{ achievement.category }}</span>
           </div>
-          <p class="achievement-date">📅 {{ achievement.date }}</p>
-        </div>
-      </div>
-
-      <div class="achievement-content">
-        <p class="description">{{ achievement.description }}</p>
-        
-        <div class="skills-section" *ngIf="achievement.skills && achievement.skills.length > 0">
-          <h5>🔧 Key Skills</h5>
-          <div class="skills-tags">
-            <span *ngFor="let skill of achievement.skills" class="skill-tag">
-              {{ skill }}
-            </span>
+          <div class="achievement-description" *ngIf="achievement.description">
+            <pre>{{ achievement.description }}</pre>
           </div>
-        </div>
-
-        <div class="credential-info" *ngIf="achievement.credentialId">
-          <p class="credential-id">
-            <strong>Credential ID:</strong> {{ achievement.credentialId }}
-          </p>
-          <a *ngIf="achievement.verificationLink" 
-             [href]="achievement.verificationLink" 
-             target="_blank" 
-             class="verification-link">
-            🔗 Verify Credential
-          </a>
         </div>
       </div>
     </div>

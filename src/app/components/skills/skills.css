@@ -55,7 +55,7 @@
 
 .section-description {
   font-size: 1.1rem;
-  color: #666;
+color: rgb(156 163 175/var(--tw-text-opacity,1));
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;

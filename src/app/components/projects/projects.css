@@ -13,7 +13,7 @@
 
 /* Section Header */
 .section-header {
-  margin-bottom: 3rem;
+  margin-bottom: 1rem;
 }
 
 .section-title {
@@ -40,7 +40,7 @@
 .section-subtitle {
   text-align: center;
   font-size: 1.1rem;
-  color: #1e252a;
+color: rgb(156 163 175/var(--tw-text-opacity,1));
   margin-bottom: 0;
   max-width: 600px;
   margin-left: auto;

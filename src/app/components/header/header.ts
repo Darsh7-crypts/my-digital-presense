@@ -9,15 +9,15 @@ type SectionId = 'home' | 'experience' | 'projects' | 'skills' | 'education' | '
   styleUrl: './header.css'
 })
 export class Header implements OnInit {
-  activeSection: SectionId = 'home';
+  public activeSection: SectionId = 'home';
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     // Initialize active section detection
     this.updateActiveSection();
   }
 
   @HostListener('window:scroll')
-  onWindowScroll(): void {
+  public onWindowScroll(): void {
     this.updateActiveSection();
   }
 

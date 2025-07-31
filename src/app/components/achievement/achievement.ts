@@ -10,10 +10,16 @@ import { PortfolioDataService, Achievement as AchievementType } from '../../serv
 })
 export class Achievement implements OnInit {
   achievements: AchievementType[] = [];
+  categories: string[] = ['Awards', 'Leadership'];
+  activeCategory: string = 'Awards';
 
   constructor(private portfolioDataService: PortfolioDataService) { }
 
   ngOnInit(): void {
     this.achievements = this.portfolioDataService.getAchievements();
+  }
+
+  getAchievementsByCategory(category: string): AchievementType[] {
+    return this.achievements.filter(a => a.category === category);
   }
 }

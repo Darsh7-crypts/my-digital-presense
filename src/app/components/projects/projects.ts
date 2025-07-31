@@ -21,32 +21,32 @@ import { PortfolioDataService, Project } from '../../services/portfolio-data';
   styleUrl: './projects.css'
 })
 export class Projects implements OnInit, OnDestroy {
-  projects: Project[] = [];
-  filteredProjects: Project[] = [];
-  selectedCategory: string = 'All';
-  expandedProject: number | null = null;
+  public projects: Project[] = [];
+  public filteredProjects: Project[] = [];
+  public selectedCategory: string = 'All';
+  public expandedProject: number | null = null;
   
   // Slider properties
-  currentSlide: number = 0;
-  visibleCards: number = 1;
-  cardWidth: number = 400; // Base card width + gap
-  autoPlayInterval: NodeJS.Timeout | null = null;
-  autoPlayEnabled: boolean = false;
+  public currentSlide: number = 0;
+  public visibleCards: number = 1;
+  public cardWidth: number = 400; // Base card width + gap
+  public autoPlayInterval: NodeJS.Timeout | null = null;
+  public autoPlayEnabled: boolean = false;
 
   // Touch/Swipe properties
   private touchStartX: number = 0;
   private touchEndX: number = 0;
   private readonly minSwipeDistance: number = 50;
 
-  constructor(private portfolioDataService: PortfolioDataService) { }
+  public constructor(private portfolioDataService: PortfolioDataService) { }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.projects = this.portfolioDataService.getProjects();
     this.filteredProjects = this.projects;
     this.updateSliderSettings();
   }
 
-  updateSliderSettings(): void {
+  public updateSliderSettings(): void {
     // Show only 1 card by default across all screen sizes
     this.visibleCards = 1;
     
@@ -64,30 +64,30 @@ export class Projects implements OnInit, OnDestroy {
     this.currentSlide = 0;
   }
 
-  nextProject(): void {
+  public nextProject(): void {
     if (this.currentSlide < this.filteredProjects.length - this.visibleCards) {
       this.currentSlide++;
     }
   }
 
-  previousProject(): void {
+  public previousProject(): void {
     if (this.currentSlide > 0) {
       this.currentSlide--;
     }
   }
 
-  goToSlide(index: number): void {
+  public goToSlide(index: number): void {
     const maxSlide = Math.max(0, this.filteredProjects.length - this.visibleCards);
     this.currentSlide = Math.min(index, maxSlide);
   }
 
   @HostListener('window:resize', ['$event'])
-  onResize(event: any): void {
+  public onResize(event: any): void {
     this.updateSliderSettings();
   }
 
   @HostListener('keydown', ['$event'])
-  onKeyDown(event: KeyboardEvent): void {
+  public onKeyDown(event: KeyboardEvent): void {
     if (event.key === 'ArrowLeft') {
       this.previousProject();
     } else if (event.key === 'ArrowRight') {
@@ -95,7 +95,7 @@ export class Projects implements OnInit, OnDestroy {
     }
   }
 
-  startAutoPlay(): void {
+  public startAutoPlay(): void {
     if (this.autoPlayEnabled) {
       this.autoPlayInterval = setInterval(() => {
         if (this.currentSlide >= this.filteredProjects.length - this.visibleCards) {
@@ -107,7 +107,7 @@ export class Projects implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
+  public ngOnDestroy(): void {
     this.stopAutoPlay();
   }
 
@@ -118,7 +118,7 @@ export class Projects implements OnInit, OnDestroy {
     }
   }
 
-  getStatusColor(status: string): string {
+  public getStatusColor(status: string): string {
     switch (status) {
       case 'Production': return 'success';
       case 'Beta': return 'warning';
@@ -127,11 +127,11 @@ export class Projects implements OnInit, OnDestroy {
     }
   }
 
-  onTouchStart(event: TouchEvent): void {
+  public onTouchStart(event: TouchEvent): void {
     this.touchStartX = event.changedTouches[0].screenX;
   }
 
-  onTouchEnd(event: TouchEvent): void {
+  public onTouchEnd(event: TouchEvent): void {
     this.touchEndX = event.changedTouches[0].screenX;
     this.handleSwipe();
   }
@@ -150,7 +150,7 @@ export class Projects implements OnInit, OnDestroy {
     }
   }
 
-  toggleAccordion(projectId: number, event?: Event): void {
+  public toggleAccordion(projectId: number, event?: Event): void {
     // Prevent event bubbling which could cause unwanted toggles
     if (event) {
       event.stopPropagation();
@@ -178,7 +178,7 @@ export class Projects implements OnInit, OnDestroy {
     }
   }
 
-  isExpanded(projectId: number): boolean {
+  public isExpanded(projectId: number): boolean {
     return this.expandedProject === projectId;
   }
 }

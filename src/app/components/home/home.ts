@@ -7,8 +7,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
   styleUrl: './home.css'
 })
 export class Home implements OnInit, OnDestroy {
-  displayedText = '';
-  showCursor = true;
+  public displayedText = '';
+  public showCursor = true;
   private initialText = 'Hi,\nI\'m Darshan Bopalkar\nwho works as a';
   private jobTitles = ['Front End Developer', 'UI Developer', 'UX Designer', 'UI Designer'];
   private typewriterInterval: any;
@@ -20,7 +20,7 @@ export class Home implements OnInit, OnDestroy {
   private jobDisplayText = '';
   private initialTextCompleted = false; // Track if initial text animation is done
 
-  get textLines(): string[] {
+  public get textLines(): string[] {
     if (!this.initialTextCompleted) {
       // During initial animation, show text as it's being typed
       const baseLines = this.displayedText.split('\n');
@@ -34,11 +34,11 @@ export class Home implements OnInit, OnDestroy {
     }
   }
 
-  get shouldShowCursor(): boolean {
+  public get shouldShowCursor(): boolean {
     return this.showCursor;
   }
 
-  isWorkLine(index: number): boolean {
+  public isWorkLine(index: number): boolean {
     // During initial animation, check if it's the third line (index 2) which contains "who works as a"
     // After initial animation, check if the line equals "who works as a"
     const line = this.textLines[index];
@@ -52,12 +52,12 @@ export class Home implements OnInit, OnDestroy {
     }
   }
 
-  ngOnInit() {
+  public ngOnInit() {
     this.startTypewriterAnimation();
     this.startCursorAnimation();
   }
 
-  ngOnDestroy() {
+  public ngOnDestroy() {
     if (this.typewriterInterval) {
       clearInterval(this.typewriterInterval);
     }

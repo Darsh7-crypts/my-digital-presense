@@ -8,6 +8,7 @@ import { Skills } from './components/skills/skills';
 import { Education } from './components/education/education';
 import { Experience } from "./components/experience/experience";
 import { Achievement } from './components/achievement/achievement';
+import { Topbar } from "./components/topbar/topbar";
 
 @Component({
   selector: 'app-root',
@@ -21,16 +22,17 @@ import { Achievement } from './components/achievement/achievement';
     Education,
     Experience,
     Achievement,
+    Topbar
 ], 
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App implements OnInit {
-  title = 'My Professional Portfolio';
-  isLoading = false;
-  showScrollButton = false;
+  public title = 'My Professional Portfolio';
+  public isLoading = false;
+  public showScrollButton = false;
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     // Show loading initially
     this.isLoading = true;
     
@@ -41,12 +43,12 @@ export class App implements OnInit {
   }
 
   @HostListener('window:scroll', [])
-  onWindowScroll(): void {
+  public onWindowScroll(): void {
     // Show scroll to top button when user scrolls down 300px
     this.showScrollButton = window.pageYOffset > 300;
   }
 
-  scrollToTop(): void {
+  public scrollToTop(): void {
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
@@ -54,7 +56,7 @@ export class App implements OnInit {
   }
 
   // Method to scroll to specific section
-  scrollToSection(sectionId: string): void {
+  public scrollToSection(sectionId: string): void {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ 

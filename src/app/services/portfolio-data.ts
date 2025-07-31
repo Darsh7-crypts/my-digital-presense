@@ -14,28 +14,24 @@ export interface Project {
   id: number;
   title: string;
   category: string;
-  technologies: string[];
-  description: string;
+  description?: string;
   features: string[];
   duration: string;
   status: string;
-  image: string;
-  demoLink: string;
-  codeLink: string;
-  achievements: string;
+  image?: string;
+  demoLink?: string;
+  codeLink?: string;
+  achievements?: string;
 }
 
 export interface Achievement {
   id: number;
   title: string;
   description: string;
-  date: string;
+  date?: string;
   category: string;
-  issuer: string;
+  issuer?: string;
   icon: string;
-  skills: string[];
-  credentialId: string;
-  verificationLink: string;
 }
 
 @Injectable({
@@ -45,7 +41,7 @@ export class PortfolioDataService {
 
   constructor() { }
 
-  getExperience(): ExperienceItem[] {
+  public getExperience(): ExperienceItem[] {
     return [
       {
         id: 1,
@@ -109,61 +105,56 @@ export class PortfolioDataService {
     ];
   }
 
-  getProjects(): Project[] {
+  public getProjects(): Project[] {
     return [
       {
         id: 1,
-        title: 'PHED (HAR GHAR NAL JAL YOJANA)',
-        category: 'UI Developer',
-        technologies: ['Angular', 'TypeScript', 'HTML5', 'CSS3', 'Bootstrap'],
-        description: 'Enterprise-grade IoT platform dashboard serving 10,000+ connected industrial devices with real-time data visualization and analytics.',
+        title: 'Electrification-X',
+        category: 'IT Software Developer',
+        description: 'he Electrification-X project, within this project domain, monitors and controls EV charging station loads using graphical representations and single-line diagrams. One application which had multiple feature sets (PAM, EVC , CSE , SM etc.) managed with the help of micro front-end library NX. front-end used SiMPL (siemens internal UI -UX library) for building angular components.',
         features: [
-          'Real-time data visualization with D3.js and Chart.js',
-          'Microservices architecture with 200% improved scalability',
-          'Advanced caching strategies reducing load time by 40%',
-          'Responsive design supporting multiple device types'
+          'Developed and optimized web applications using Angular (v13-17), improving performance and usability.',
+          'Designed and implemented intuitive UI/UX solutions in Figma, ensuring consistency across web and mobile platforms.',
+          'Architected and deployed micro-frontend solutions using Module Federation, successfully breaking down a monolithic application into 10 independent micro-frontends, reducing build time by 45% and enabling parallel development across 10 cross-functional teams.',
+          'Created wireframes, prototypes, and interactive designs to enhance user engagement.',
         ],
-        duration: '9 months',
+        duration: '2 - Present',
         status: 'Production',
-        image: '/assets/images/mindosphere-dashboard.jpg',
         demoLink: '',
         codeLink: '',
         achievements: 'Improved system performance by 200% and reduced load times by 40%'
       },
       {
         id: 2,
-        title: 'Office 365 Component Library',
+        title: 'NX power Monitor',
         category: 'Frontend',
-        technologies: ['React', 'TypeScript', 'SASS', 'Jest', 'Storybook'],
-        description: 'Reusable component library used by 20+ development teams across Microsoft, featuring accessibility-first design principles.',
+        description: `This project falls under the electric domain and involves implementing various related products. Key elements include substations, switchgear, feeders, transformers, and motors, with capabilities to monitor Condition monitoring, Temperature Monitoring, current, voltage, energy, and more.`,
         features: [
-          'WCAG 2.1 compliant accessible components',
+          'Built 15+ reusable components using TypeScript.',
+          'Achieved 90% unit test coverage using Jasmine and Karma',
+          'Optimized existing web pages, ensuring cross-browser compatibility and accessibility.',
+          'Collaborated with scrum teams, participated in sprint planning, standups, and backlog grooming.',
           'Comprehensive testing with 90% code coverage',
-          'Interactive documentation with Storybook',
-          'Optimized for 95+ Lighthouse scores'
         ],
-        duration: '8 months',
+        duration: '2 years',
         status: 'Production',
-        image: '/assets/images/office365-components.jpg',
-        demoLink: 'https://components.office365.com',
-        codeLink: 'https://github.com/microsoft/office365-components',
-        achievements: 'Adopted by 20+ teams, achieved 95+ Lighthouse scores across all metrics'
+        image: '',
+
       },
       {
         id: 3,
-        title: 'AWS Serverless E-Commerce API',
-        category: 'Backend',
-        technologies: ['AWS Lambda', 'API Gateway', 'DynamoDB', 'CloudFormation', 'Node.js'],
-        description: 'Scalable serverless e-commerce API handling 1M+ requests daily with 99.9% uptime and comprehensive monitoring.',
-        features: [
-          'Serverless architecture with auto-scaling',
-          'Comprehensive CI/CD pipeline with AWS CodePipeline',
-          'Real-time monitoring and alerting',
-          'Cost optimization reducing infrastructure costs by 35%'
+        title: 'PHED (HAR GHAR NAL JAL YOJANA)',
+        category: 'Frontend',
+        description: 'PHED stands for Public Health Engineering Department. We developed a web application to monitor water supply data for households in Bihar, including metrics such as water pressure, quantity supplied, water quality, and live water station status.',
+         features: [
+          'Developed and deployed interactive landing pages with HTML, CSS, JavaScript.',
+          'Designed and implemented responsive UI components, improving user experience.',
+          'Worked in an Agile environment, assisting in product releases and feature enhancements.',
+          'Engaged in UX testing and design system implementation for consistent branding.',
         ],
-        duration: '4 months',
+        duration: '1 year',
         status: 'Production',
-        image: '/assets/images/aws-ecommerce-api.jpg',
+        image: '',
         demoLink: '',
         codeLink: '',
         achievements: 'Handles 1M+ daily requests with 99.9% uptime, reduced costs by 35%'
@@ -171,43 +162,43 @@ export class PortfolioDataService {
     ];
   }
 
-  getAchievements(): Achievement[] {
+  public getAchievements(): Achievement[] {
     return [
       {
-        id: 1,
-        title: 'Microsoft Certified: Azure Developer Associate',
-        category: 'Certification',
-        issuer: 'Microsoft',
-        date: 'March 2023',
-        icon: '🏆',
-        description: 'Demonstrated expertise in developing and maintaining cloud applications on Microsoft Azure platform.',
-        skills: ['Azure Functions', 'Azure Storage', 'Azure DevOps', 'Cloud Architecture'],
-        credentialId: 'AZ-204',
-        verificationLink: 'https://www.credly.com/badges/azure-developer-associate'
-      },
+      id: 1,
+      title: 'Werner von Siemens Award technology with purpose',
+      category: 'Awards',
+      issuer: 'Siemens',
+      date: 'June 2022',
+      icon: '🥇',
+      description: 'Awarded the prestigious Werner von Siemens Award for the "Clean Drinking Water to every household - IoT Enabled solution- Mindsphere " project, which provided IoT-enabled solutions to ensure clean drinking water access for every household in Bihar, India. This project was recognized for its innovative use of Mindsphere technology in the PHED (HAR GHAR NAL JAL YOJANA) initiative.',
+    },
       {
         id: 2,
-        title: 'AWS Certified Solutions Architect',
-        category: 'Certification',
-        issuer: 'Amazon Web Services',
-        date: 'November 2022',
-        icon: '☁️',
-        description: 'Proven ability to design and deploy scalable, highly available systems on AWS.',
-        skills: ['EC2', 'S3', 'Lambda', 'CloudFormation', 'VPC'],
-        credentialId: 'SAA-C03',
-        verificationLink: 'https://www.credly.com/badges/aws-solutions-architect'
+        title: 'Beyond Call of Duty Award',
+        category: 'Awards',
+        issuer: 'Siemens',
+        date: 'June 2024',
+        icon: '🥇',
+        description: 'Honored the Beyond Call of Duty Award for exceptional performance, resolving over 4,000 quality issues within just two months.'
       },
       {
         id: 3,
-        title: 'Google Cloud Professional Developer',
-        category: 'Certification',
-        issuer: 'Google Cloud',
-        date: 'January 2024',
-        icon: '🌐',
-        description: 'Expertise in building scalable and reliable applications using Google Cloud Platform services.',
-        skills: ['Cloud Functions', 'Kubernetes', 'BigQuery', 'Cloud Storage', 'Firebase'],
-        credentialId: 'PCD-2024',
-        verificationLink: 'https://cloud.google.com/certification/cloud-developer'
+        title: 'Branding & Engagement Spark Team',
+        category: 'Leadership',
+        icon: '👑',
+        description: `As administrator of the Branding & Engagement Spark team, I spearhead strategic branding initiatives, nurture creativity, and promote collaboration to elevate organizational engagement.Organized a variety of events, games, and team-building activities to foster a vibrant and connected workplace culture.`
+      },
+      {
+        id: 4,
+        title: 'Scrum Master',
+        category: 'Leadership',
+        icon: '👑',
+        description: `Oversaw Scrum Master responsibilities:
+              - Facilitated daily stand-ups for a 16-member cross-functional team, maintaining a 95% attendance rate.
+              - Led bi-weekly sprint planning, achieving a 92% sprint goal completion rate.
+              - Introduced improved estimation methods, reducing planning deviations.
+              - Established a structured process for backlog grooming.`
       }
     ];
   }

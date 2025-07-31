@@ -16,7 +16,7 @@ interface EducationItem {
   styleUrl: './education.css'
 })
 export class Education {
-  educationData: EducationItem[] = [
+  public educationData: EducationItem[] = [
     {
       id: 1,
       degree: 'Bachelor in Mechanical Engineering',
