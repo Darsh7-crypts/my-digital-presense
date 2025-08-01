@@ -9,6 +9,7 @@ import { Education } from './components/education/education';
 import { Experience } from "./components/experience/experience";
 import { Achievement } from './components/achievement/achievement';
 import { Topbar } from "./components/topbar/topbar";
+import { SwirlCursorComponent } from "./components/swirl-cursor/swirl-cursor";
 
 @Component({
   selector: 'app-root',
@@ -22,7 +23,8 @@ import { Topbar } from "./components/topbar/topbar";
     Education,
     Experience,
     Achievement,
-    Topbar
+    Topbar,
+    SwirlCursorComponent
 ], 
   templateUrl: './app.html',
   styleUrl: './app.css'
