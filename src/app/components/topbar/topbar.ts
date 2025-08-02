@@ -8,13 +8,22 @@ import { Component } from "@angular/core";
   imports: [CommonModule]
 })
 export class Topbar {
-  sliderOpen = false;
+  public sliderOpen = false;
 
-  toggleSlider() {
+  /**
+   * This component represents the top navigation bar of the portfolio.
+   * It includes a toggle for a slider menu and a method to download the resume.
+   */
+  public toggleSlider() {
     this.sliderOpen = !this.sliderOpen;
   }
 
-  downloadResume() {
+  /**
+   * Downloads the resume PDF file when called.
+   * It creates a link element, sets its href to the resume path, and triggers a download.
+   * If an error occurs, it opens the resume in a new tab as a fallback.
+   */
+   public downloadResume() {
     const resumePath = 'darshan_bopalkar-8007981191.pdf'; // File in public folder
     const fileName = 'darshan_bopalkar-8007981191.pdf';
     

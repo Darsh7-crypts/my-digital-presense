@@ -41,6 +41,10 @@ export class PortfolioDataService {
 
   constructor() { }
 
+  /**
+   * Retrieves a list of experience items.
+   * @returns An array of ExperienceItem objects.
+   */
   public getExperience(): ExperienceItem[] {
     return [
       {
@@ -105,6 +109,10 @@ export class PortfolioDataService {
     ];
   }
 
+  /**
+   * Retrieves a list of projects.
+   * @returns An array of Project objects.
+   */
   public getProjects(): Project[] {
     return [
       {
@@ -162,6 +170,10 @@ export class PortfolioDataService {
     ];
   }
 
+  /**
+   * Retrieves a list of achievements.
+   * @returns An array of Achievement objects.
+   */
   public getAchievements(): Achievement[] {
     return [
       {

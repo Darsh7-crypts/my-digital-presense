@@ -1,12 +1,12 @@
 import { Component, AfterViewInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 
-interface FluidConfig {
+interface Fluid_config {
   TEXTURE_DOWNSAMPLE: number;
   DENSITY_DISSIPATION: number;
   VELOCITY_DISSIPATION: number;
   PRESSURE_DISSIPATION: number;
   PRESSURE_ITERATIONS: number;
-  CURL: number;
+  _curl: number;
   SPLAT_RADIUS: number;
 }
 
@@ -74,48 +74,55 @@ class GLProgram {
 })
 export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
   @ViewChild('swirlCanvas', { static: true }) swirlCanvas!: ElementRef<HTMLCanvasElement>;
-  private gl: WebGLRenderingContext | null = null;
-  private animationFrameId: number = 0;
-  private ext: WebGLExtensions | null = null;
+  private _gl: WebGLRenderingContext | null = null;
+  private _animationFrameId: number = 0;
+  private _ext: WebGLExtensions | null = null;
 
   
-  private config: FluidConfig = {
+  private _config: Fluid_config = {
     TEXTURE_DOWNSAMPLE: 1,
     DENSITY_DISSIPATION: 0.98,
     VELOCITY_DISSIPATION: 0.99,
     PRESSURE_DISSIPATION: 0.8,
     PRESSURE_ITERATIONS: 25,
-    CURL: 28,
+    _curl: 28,
     SPLAT_RADIUS: 0.004
   };
 
-  private pointers: Pointer[] = [];
-  private splatStack: number[] = [];
+  private _pointers: Pointer[] = [];
+  private _splatStack: number[] = [];
   
   // WebGL Programs
-  private clearProgram: GLProgram | null = null;
-  private displayProgram: GLProgram | null = null;
-  private splatProgram: GLProgram | null = null;
-  private advectionProgram: GLProgram | null = null;
-  private divergenceProgram: GLProgram | null = null;
-  private curlProgram: GLProgram | null = null;
-  private vorticityProgram: GLProgram | null = null;
-  private pressureProgram: GLProgram | null = null;
-  private gradienSubtractProgram: GLProgram | null = null;
+  private _clearProgram: GLProgram | null = null;
+  private _displayProgram: GLProgram | null = null;
+  private _splatProgram: GLProgram | null = null;
+  private _advectionProgram: GLProgram | null = null;
+  private _divergenceProgram: GLProgram | null = null;
+  private _curlProgram: GLProgram | null = null;
+  private _vorticityProgram: GLProgram | null = null;
+  private _pressureProgram: GLProgram | null = null;
+  private _gradienSubtractProgram: GLProgram | null = null;
   
   // Framebuffers
-  private textureWidth: number = 0;
-  private textureHeight: number = 0;
-  private density: DoubleFBO | null = null;
-  private velocity: DoubleFBO | null = null;
-  private divergence: FBO | null = null;
-  private curl: FBO | null = null;
-  private pressure: DoubleFBO | null = null;
+  private _textureWidth: number = 0;
+  private _textureHeight: number = 0;
+  private _density: DoubleFBO | null = null;
+  private _velocity: DoubleFBO | null = null;
+  private _divergence: FBO | null = null;
+  private _curl: FBO | null = null;
+  private _pressure: DoubleFBO | null = null;
   
-  private lastTime: number = Date.now();
-  private blit: ((destination: WebGLFramebuffer | null) => void) | null = null;
+  private _lastTime: number = Date.now();
+  private _blit: ((destination: WebGLFramebuffer | null) => void) | null = null;
 
-  ngAfterViewInit() {
+  /**
+   * Initializes the component, sets up WebGL context, and prepares shaders and framebuffers.
+   * This method is called after the view has been initialized.
+   * @returns {void}
+   * @memberof SwirlCursorComponent
+   * @throws {Error} If WebGL context cannot be created or shaders fail to compile.
+   */
+  public ngAfterViewInit() {
     const canvas = this.swirlCanvas.nativeElement;
     // Set canvas to full viewport size
     canvas.width = window.innerWidth;
@@ -123,9 +130,9 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
     canvas.style.width = '100vw';
     canvas.style.height = '100vh';
 
-    const context = this.getWebGLContext(canvas);
-    this.gl = context.gl;
-    this.ext = context.ext;
+    const context = this._getWebGLContext(canvas);
+    this._gl = context.gl;
+    this._ext = context.ext;
 
     this.initPointers();
     this.initShaders();
@@ -141,10 +148,16 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
     document.addEventListener('touchend', this.onTouchEnd);
     window.addEventListener('resize', this.onResize);
 
-    this.update();
+    this._update();
   }
 
-  ngOnDestroy() {
+    /**
+     * Cleans up the component by removing event listeners and canceling the animation frame.
+     * This method is called when the component is destroyed.
+     * @returns {void}
+     * @memberof SwirlCursorComponent
+     */
+  public ngOnDestroy() {
     // Remove global event listeners
     document.removeEventListener('mousemove', this.onMouseMove);
     document.removeEventListener('touchmove', this.onTouchMove);
@@ -153,10 +166,15 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
     document.removeEventListener('mouseleave', this.onMouseLeave);
     document.removeEventListener('touchend', this.onTouchEnd);
     window.removeEventListener('resize', this.onResize);
-    cancelAnimationFrame(this.animationFrameId);
+    cancelAnimationFrame(this._animationFrameId);
   }
 
-  private getWebGLContext(canvas: HTMLCanvasElement) {
+    /**
+     * Initializes the WebGL context and sets up the canvas for rendering.
+     * @param canvas The HTML canvas element to initialize.
+     * @returns An object containing the WebGL context and extensions.
+     */
+  private _getWebGLContext(canvas: HTMLCanvasElement) {
     const params = { alpha: false, depth: false, stencil: false, antialias: false };
 
     let gl = canvas.getContext('webgl2', params) as WebGLRenderingContext;
@@ -183,13 +201,13 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
     let formatR: any;
 
     if (isWebGL2) {
-      formatRGBA = this.getSupportedFormat(gl, (gl as any).RGBA16F, gl.RGBA, halfFloatTexType);
-      formatRG = this.getSupportedFormat(gl, (gl as any).RG16F, (gl as any).RG, halfFloatTexType);
-      formatR = this.getSupportedFormat(gl, (gl as any).R16F, (gl as any).RED, halfFloatTexType);
+      formatRGBA = this._getSupportedFormat(gl, (gl as any).RGBA16F, gl.RGBA, halfFloatTexType);
+      formatRG = this._getSupportedFormat(gl, (gl as any).RG16F, (gl as any).RG, halfFloatTexType);
+      formatR = this._getSupportedFormat(gl, (gl as any).R16F, (gl as any).RED, halfFloatTexType);
     } else {
-      formatRGBA = this.getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
-      formatRG = this.getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
-      formatR = this.getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
+      formatRGBA = this._getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
+      formatRG = this._getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
+      formatR = this._getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
     }
 
     return {
@@ -204,13 +222,24 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
     };
   }
 
-  private getSupportedFormat(gl: WebGLRenderingContext, internalFormat: number, format: number, type: number): any {
-    if (!this.supportRenderTextureFormat(gl, internalFormat, format, type)) {
+    /**
+     * Creates a framebuffer with a texture attachment.
+     * @param id The ID of the framebuffer.
+     * @param width The width of the texture.
+     * @param height The height of the texture.
+     * @param internalFormat The internal format of the texture.
+     * @param format The format of the texture.
+     * @param type The type of the texture data.
+     * @param filter The filtering mode for the texture.
+     * @returns A framebuffer object with a texture attachment.
+     */
+  private _getSupportedFormat(gl: WebGLRenderingContext, internalFormat: number, format: number, type: number): any {
+    if (!this._supportRenderTextureFormat(gl, internalFormat, format, type)) {
       switch (internalFormat) {
         case (gl as any).R16F:
-          return this.getSupportedFormat(gl, (gl as any).RG16F, (gl as any).RG, type);
+          return this._getSupportedFormat(gl, (gl as any).RG16F, (gl as any).RG, type);
         case (gl as any).RG16F:
-          return this.getSupportedFormat(gl, (gl as any).RGBA16F, gl.RGBA, type);
+          return this._getSupportedFormat(gl, (gl as any).RGBA16F, gl.RGBA, type);
         default:
           return null;
       }
@@ -222,7 +251,15 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
     };
   }
 
-  private supportRenderTextureFormat(gl: WebGLRenderingContext, internalFormat: number, format: number, type: number): boolean {
+  /**
+   * Checks if the WebGL context supports rendering to a texture with the specified parameters.
+   * @param gl The WebGL rendering context.
+   * @param internalFormat The internal format of the texture.
+   * @param format The format of the texture.
+   * @param type The type of the texture data.
+   * @return {boolean} True if the format is supported, false otherwise.
+   */
+  private _supportRenderTextureFormat(gl: WebGLRenderingContext, internalFormat: number, format: number, type: number): boolean {
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
@@ -239,8 +276,12 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
     return status === gl.FRAMEBUFFER_COMPLETE;
   }
 
+    /**
+     * Initializes the pointers used for tracking mouse and touch events.
+     * This method sets up the initial state of the pointers array.
+     */
   private initPointers() {
-    this.pointers.push({
+    this._pointers.push({
       id: -1,
       x: 0,
       y: 0,
@@ -252,20 +293,32 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+    /**
+     * Initializes the shaders used for rendering the fluid simulation.
+     * This method compiles the vertex and fragment shaders and creates WebGL programs.
+     */
   private compileShader(type: number, source: string): WebGLShader {
-    const shader = this.gl!.createShader(type)!;
-    this.gl!.shaderSource(shader, source);
-    this.gl!.compileShader(shader);
+    const shader = this._gl!.createShader(type)!;
+    this._gl!.shaderSource(shader, source);
+    this._gl!.compileShader(shader);
 
-    if (!this.gl!.getShaderParameter(shader, this.gl!.COMPILE_STATUS)) {
-      throw this.gl!.getShaderInfoLog(shader);
+    if (!this._gl!.getShaderParameter(shader, this._gl!.COMPILE_STATUS)) {
+      throw this._gl!.getShaderInfoLog(shader);
     }
 
     return shader;
   }
 
+  /**
+*
+* Initializes the shaders used for rendering the fluid simulation.
+* This method compiles the vertex and fragment shaders and creates WebGL programs.
+* @param {WebGLRenderingContext} gl The WebGL rendering context.
+* @return {void}
+* @throws {Error} If shader compilation fails.
+*/
   private initShaders() {
-    const gl = this.gl!;
+    const gl = this._gl!;
     
     const baseVertexShader = this.compileShader(gl.VERTEX_SHADER, `
       precision highp float;
@@ -413,7 +466,7 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
       }
     `);
 
-    const curlShader = this.compileShader(gl.FRAGMENT_SHADER, `
+    const _curlShader = this.compileShader(gl.FRAGMENT_SHADER, `
       precision highp float;
       precision mediump sampler2D;
 
@@ -442,16 +495,16 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
       varying vec2 vT;
       varying vec2 vB;
       uniform sampler2D uVelocity;
-      uniform sampler2D uCurl;
-      uniform float curl;
+      uniform sampler2D u_curl;
+      uniform float _curl;
       uniform float dt;
 
       void main () {
-          float T = texture2D(uCurl, vT).x;
-          float B = texture2D(uCurl, vB).x;
-          float C = texture2D(uCurl, vUv).x;
+          float T = texture2D(u_curl, vT).x;
+          float B = texture2D(u_curl, vB).x;
+          float C = texture2D(u_curl, vUv).x;
           vec2 force = vec2(abs(T) - abs(B), 0.0);
-          force *= 1.0 / length(force + 0.00001) * curl * C;
+          force *= 1.0 / length(force + 0.00001) * _curl * C;
           vec2 vel = texture2D(uVelocity, vUv).xy;
           gl_FragColor = vec4(vel + force * dt, 0.0, 1.0);
       }
@@ -514,36 +567,44 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
       }
     `);
 
-    this.clearProgram = new GLProgram(gl, baseVertexShader, clearShader);
-    this.displayProgram = new GLProgram(gl, baseVertexShader, displayShader);
-    this.splatProgram = new GLProgram(gl, baseVertexShader, splatShader);
-    this.advectionProgram = new GLProgram(gl, baseVertexShader, this.ext!.supportLinearFiltering ? advectionShader : advectionManualFilteringShader);
-    this.divergenceProgram = new GLProgram(gl, baseVertexShader, divergenceShader);
-    this.curlProgram = new GLProgram(gl, baseVertexShader, curlShader);
-    this.vorticityProgram = new GLProgram(gl, baseVertexShader, vorticityShader);
-    this.pressureProgram = new GLProgram(gl, baseVertexShader, pressureShader);
-    this.gradienSubtractProgram = new GLProgram(gl, baseVertexShader, gradientSubtractShader);
+    this._clearProgram = new GLProgram(gl, baseVertexShader, clearShader);
+    this._displayProgram = new GLProgram(gl, baseVertexShader, displayShader);
+    this._splatProgram = new GLProgram(gl, baseVertexShader, splatShader);
+    this._advectionProgram = new GLProgram(gl, baseVertexShader, this._ext!.supportLinearFiltering ? advectionShader : advectionManualFilteringShader);
+    this._divergenceProgram = new GLProgram(gl, baseVertexShader, divergenceShader);
+    this._curlProgram = new GLProgram(gl, baseVertexShader, _curlShader);
+    this._vorticityProgram = new GLProgram(gl, baseVertexShader, vorticityShader);
+    this._pressureProgram = new GLProgram(gl, baseVertexShader, pressureShader);
+    this._gradienSubtractProgram = new GLProgram(gl, baseVertexShader, gradientSubtractShader);
   }
 
+    /**
+     * Initializes the framebuffers used for rendering the fluid simulation.
+     * This method creates textures and framebuffers for density, velocity, divergence, curl, and pressure.
+     */
   private initFramebuffers() {
-    const gl = this.gl!;
-    this.textureWidth = gl.drawingBufferWidth >> this.config.TEXTURE_DOWNSAMPLE;
-    this.textureHeight = gl.drawingBufferHeight >> this.config.TEXTURE_DOWNSAMPLE;
+    const gl = this._gl!;
+    this._textureWidth = gl.drawingBufferWidth >> this._config.TEXTURE_DOWNSAMPLE;
+    this._textureHeight = gl.drawingBufferHeight >> this._config.TEXTURE_DOWNSAMPLE;
 
-    const texType = this.ext!.halfFloatTexType;
-    const rgba = this.ext!.formatRGBA;
-    const rg = this.ext!.formatRG;
-    const r = this.ext!.formatR;
+    const texType = this._ext!.halfFloatTexType;
+    const rgba = this._ext!.formatRGBA;
+    const rg = this._ext!.formatRG;
+    const r = this._ext!.formatR;
 
-    this.density = this.createDoubleFBO(2, this.textureWidth, this.textureHeight, rgba.internalFormat, rgba.format, texType, this.ext!.supportLinearFiltering ? gl.LINEAR : gl.NEAREST);
-    this.velocity = this.createDoubleFBO(0, this.textureWidth, this.textureHeight, rg.internalFormat, rg.format, texType, this.ext!.supportLinearFiltering ? gl.LINEAR : gl.NEAREST);
-    this.divergence = this.createFBO(4, this.textureWidth, this.textureHeight, r.internalFormat, r.format, texType, gl.NEAREST);
-    this.curl = this.createFBO(5, this.textureWidth, this.textureHeight, r.internalFormat, r.format, texType, gl.NEAREST);
-    this.pressure = this.createDoubleFBO(6, this.textureWidth, this.textureHeight, r.internalFormat, r.format, texType, gl.NEAREST);
+    this._density = this.createDoubleFBO(2, this._textureWidth, this._textureHeight, rgba.internalFormat, rgba.format, texType, this._ext!.supportLinearFiltering ? gl.LINEAR : gl.NEAREST);
+    this._velocity = this.createDoubleFBO(0, this._textureWidth, this._textureHeight, rg.internalFormat, rg.format, texType, this._ext!.supportLinearFiltering ? gl.LINEAR : gl.NEAREST);
+    this._divergence = this.createFBO(4, this._textureWidth, this._textureHeight, r.internalFormat, r.format, texType, gl.NEAREST);
+    this._curl = this.createFBO(5, this._textureWidth, this._textureHeight, r.internalFormat, r.format, texType, gl.NEAREST);
+    this._pressure = this.createDoubleFBO(6, this._textureWidth, this._textureHeight, r.internalFormat, r.format, texType, gl.NEAREST);
   }
 
+    /**
+     * Resizes the canvas and updates the texture dimensions.
+     * This method is called when the window is resized.
+     */
   private createFBO(texId: number, w: number, h: number, internalFormat: number, format: number, type: number, param: number): FBO {
-    const gl = this.gl!;
+    const gl = this._gl!;
     gl.activeTexture(gl.TEXTURE0 + texId);
     const texture = gl.createTexture()!;
     gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -562,6 +623,18 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
     return [texture, fbo, texId] as any;
   }
 
+  /**
+   * Creates a double framebuffer object for ping-pong rendering.
+   * This allows for efficient rendering by swapping between two framebuffers.
+   * @param texId The base texture ID for the framebuffer.
+   * @param w The width of the framebuffer.
+   *    @param h The height of the framebuffer.
+   * @param internalFormat The internal format of the texture.
+   * @param format The format of the texture.
+   * @param type The type of the texture data.
+   * @param param The filtering parameter for the texture.
+   * @returns A DoubleFBO object containing two framebuffers for reading and writing.
+   */
   private createDoubleFBO(texId: number, w: number, h: number, internalFormat: number, format: number, type: number, param: number): DoubleFBO {
     let fbo1 = this.createFBO(texId, w, h, internalFormat, format, type, param);
     let fbo2 = this.createFBO(texId + 1, w, h, internalFormat, format, type, param);
@@ -581,8 +654,12 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
     };
   }
 
+    /**
+     * Resizes the canvas and updates the texture dimensions.
+     * This method is called when the window is resized.
+     */
   private initBlit() {
-    const gl = this.gl!;
+    const gl = this._gl!;
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, -1, 1, 1, 1, 1, -1]), gl.STATIC_DRAW);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
@@ -590,122 +667,140 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
     gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(0);
 
-    this.blit = (destination: WebGLFramebuffer | null) => {
+    this._blit = (destination: WebGLFramebuffer | null) => {
       gl.bindFramebuffer(gl.FRAMEBUFFER, destination);
       gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
     };
   }
 
-  private update = () => {
+    /**
+     * Resizes the canvas and updates the texture dimensions.
+     * This method is called when the window is resized.
+     */
+  private _update = () => {
     this.resizeCanvas();
 
-    const dt = Math.min((Date.now() - this.lastTime) / 1000, 0.016);
-    this.lastTime = Date.now();
+    const dt = Math.min((Date.now() - this._lastTime) / 1000, 0.016);
+    this._lastTime = Date.now();
 
-    const gl = this.gl!;
-    gl.viewport(0, 0, this.textureWidth, this.textureHeight);
+    const gl = this._gl!;
+    gl.viewport(0, 0, this._textureWidth, this._textureHeight);
 
-    if (this.splatStack.length > 0) {
-      this.multipleSplats(this.splatStack.pop()!);
+    if (this._splatStack.length > 0) {
+      this.multipleSplats(this._splatStack.pop()!);
     }
 
-    this.advectionProgram!.bind();
-    gl.uniform2f(this.advectionProgram!.uniforms['texelSize'] as WebGLUniformLocation, 1.0 / this.textureWidth, 1.0 / this.textureHeight);
-    gl.uniform1i(this.advectionProgram!.uniforms['uVelocity'] as WebGLUniformLocation, this.velocity!.read[2]);
-    gl.uniform1i(this.advectionProgram!.uniforms['uSource'] as WebGLUniformLocation, this.velocity!.read[2]);
-    gl.uniform1f(this.advectionProgram!.uniforms['dt'] as WebGLUniformLocation, dt);
-    gl.uniform1f(this.advectionProgram!.uniforms['dissipation'] as WebGLUniformLocation, this.config.VELOCITY_DISSIPATION);
-    this.blit!(this.velocity!.write[1]);
-    this.velocity!.swap();
+    this._advectionProgram!.bind();
+    gl.uniform2f(this._advectionProgram!.uniforms['texelSize'] as WebGLUniformLocation, 1.0 / this._textureWidth, 1.0 / this._textureHeight);
+    gl.uniform1i(this._advectionProgram!.uniforms['uVelocity'] as WebGLUniformLocation, this._velocity!.read[2]);
+    gl.uniform1i(this._advectionProgram!.uniforms['uSource'] as WebGLUniformLocation, this._velocity!.read[2]);
+    gl.uniform1f(this._advectionProgram!.uniforms['dt'] as WebGLUniformLocation, dt);
+    gl.uniform1f(this._advectionProgram!.uniforms['dissipation'] as WebGLUniformLocation, this._config.VELOCITY_DISSIPATION);
+    this._blit!(this._velocity!.write[1]);
+    this._velocity!.swap();
 
-    gl.uniform1i(this.advectionProgram!.uniforms['uVelocity'] as WebGLUniformLocation, this.velocity!.read[2]);
-    gl.uniform1i(this.advectionProgram!.uniforms['uSource'] as WebGLUniformLocation, this.density!.read[2]);
-    gl.uniform1f(this.advectionProgram!.uniforms['dissipation'] as WebGLUniformLocation, this.config.DENSITY_DISSIPATION);
-    this.blit!(this.density!.write[1]);
-    this.density!.swap();
+    gl.uniform1i(this._advectionProgram!.uniforms['uVelocity'] as WebGLUniformLocation, this._velocity!.read[2]);
+    gl.uniform1i(this._advectionProgram!.uniforms['uSource'] as WebGLUniformLocation, this._density!.read[2]);
+    gl.uniform1f(this._advectionProgram!.uniforms['dissipation'] as WebGLUniformLocation, this._config.DENSITY_DISSIPATION);
+    this._blit!(this._density!.write[1]);
+    this._density!.swap();
 
-    for (let i = 0; i < this.pointers.length; i++) {
-      const pointer = this.pointers[i];
+    for (let i = 0; i < this._pointers.length; i++) {
+      const pointer = this._pointers[i];
       if (pointer.moved) {
         this.splat(pointer.x, pointer.y, pointer.dx, pointer.dy, pointer.color);
         pointer.moved = false;
       }
     }
 
-    this.curlProgram!.bind();
-    gl.uniform2f(this.curlProgram!.uniforms['texelSize'] as WebGLUniformLocation, 1.0 / this.textureWidth, 1.0 / this.textureHeight);
-    gl.uniform1i(this.curlProgram!.uniforms['uVelocity'] as WebGLUniformLocation, this.velocity!.read[2]);
-    this.blit!(this.curl![1]);
+    this._curlProgram!.bind();
+    gl.uniform2f(this._curlProgram!.uniforms['texelSize'] as WebGLUniformLocation, 1.0 / this._textureWidth, 1.0 / this._textureHeight);
+    gl.uniform1i(this._curlProgram!.uniforms['uVelocity'] as WebGLUniformLocation, this._velocity!.read[2]);
+    this._blit!(this._curl![1]);
 
-    this.vorticityProgram!.bind();
-    gl.uniform2f(this.vorticityProgram!.uniforms['texelSize'] as WebGLUniformLocation, 1.0 / this.textureWidth, 1.0 / this.textureHeight);
-    gl.uniform1i(this.vorticityProgram!.uniforms['uVelocity'] as WebGLUniformLocation, this.velocity!.read[2]);
-    gl.uniform1i(this.vorticityProgram!.uniforms['uCurl'] as WebGLUniformLocation, this.curl![2]);
-    gl.uniform1f(this.vorticityProgram!.uniforms['curl'] as WebGLUniformLocation, this.config.CURL);
-    gl.uniform1f(this.vorticityProgram!.uniforms['dt'] as WebGLUniformLocation, dt);
-    this.blit!(this.velocity!.write[1]);
-    this.velocity!.swap();
+    this._vorticityProgram!.bind();
+    gl.uniform2f(this._vorticityProgram!.uniforms['texelSize'] as WebGLUniformLocation, 1.0 / this._textureWidth, 1.0 / this._textureHeight);
+    gl.uniform1i(this._vorticityProgram!.uniforms['uVelocity'] as WebGLUniformLocation, this._velocity!.read[2]);
+    gl.uniform1i(this._vorticityProgram!.uniforms['u_curl'] as WebGLUniformLocation, this._curl![2]);
+    gl.uniform1f(this._vorticityProgram!.uniforms['_curl'] as WebGLUniformLocation, this._config._curl);
+    gl.uniform1f(this._vorticityProgram!.uniforms['dt'] as WebGLUniformLocation, dt);
+    this._blit!(this._velocity!.write[1]);
+    this._velocity!.swap();
 
-    this.divergenceProgram!.bind();
-    gl.uniform2f(this.divergenceProgram!.uniforms['texelSize'] as WebGLUniformLocation, 1.0 / this.textureWidth, 1.0 / this.textureHeight);
-    gl.uniform1i(this.divergenceProgram!.uniforms['uVelocity'] as WebGLUniformLocation, this.velocity!.read[2]);
-    this.blit!(this.divergence![1]);
+    this._divergenceProgram!.bind();
+    gl.uniform2f(this._divergenceProgram!.uniforms['texelSize'] as WebGLUniformLocation, 1.0 / this._textureWidth, 1.0 / this._textureHeight);
+    gl.uniform1i(this._divergenceProgram!.uniforms['uVelocity'] as WebGLUniformLocation, this._velocity!.read[2]);
+    this._blit!(this._divergence![1]);
 
-    this.clearProgram!.bind();
-    let pressureTexId = this.pressure!.read[2];
+    this._clearProgram!.bind();
+    let pressureTexId = this._pressure!.read[2];
     gl.activeTexture(gl.TEXTURE0 + pressureTexId);
-    gl.bindTexture(gl.TEXTURE_2D, this.pressure!.read[0]);
-    gl.uniform1i(this.clearProgram!.uniforms['uTexture'] as WebGLUniformLocation, pressureTexId);
-    gl.uniform1f(this.clearProgram!.uniforms['value'] as WebGLUniformLocation, this.config.PRESSURE_DISSIPATION);
-    this.blit!(this.pressure!.write[1]);
-    this.pressure!.swap();
+    gl.bindTexture(gl.TEXTURE_2D, this._pressure!.read[0]);
+    gl.uniform1i(this._clearProgram!.uniforms['uTexture'] as WebGLUniformLocation, pressureTexId);
+    gl.uniform1f(this._clearProgram!.uniforms['value'] as WebGLUniformLocation, this._config.PRESSURE_DISSIPATION);
+    this._blit!(this._pressure!.write[1]);
+    this._pressure!.swap();
 
-    this.pressureProgram!.bind();
-    gl.uniform2f(this.pressureProgram!.uniforms['texelSize'] as WebGLUniformLocation, 1.0 / this.textureWidth, 1.0 / this.textureHeight);
-    gl.uniform1i(this.pressureProgram!.uniforms['uDivergence'] as WebGLUniformLocation, this.divergence![2]);
-    pressureTexId = this.pressure!.read[2];
-    gl.uniform1i(this.pressureProgram!.uniforms['uPressure'] as WebGLUniformLocation, pressureTexId);
+    this._pressureProgram!.bind();
+    gl.uniform2f(this._pressureProgram!.uniforms['texelSize'] as WebGLUniformLocation, 1.0 / this._textureWidth, 1.0 / this._textureHeight);
+    gl.uniform1i(this._pressureProgram!.uniforms['uDivergence'] as WebGLUniformLocation, this._divergence![2]);
+    pressureTexId = this._pressure!.read[2];
+    gl.uniform1i(this._pressureProgram!.uniforms['uPressure'] as WebGLUniformLocation, pressureTexId);
     gl.activeTexture(gl.TEXTURE0 + pressureTexId);
-    for (let i = 0; i < this.config.PRESSURE_ITERATIONS; i++) {
-      gl.bindTexture(gl.TEXTURE_2D, this.pressure!.read[0]);
-      this.blit!(this.pressure!.write[1]);
-      this.pressure!.swap();
+    for (let i = 0; i < this._config.PRESSURE_ITERATIONS; i++) {
+      gl.bindTexture(gl.TEXTURE_2D, this._pressure!.read[0]);
+      this._blit!(this._pressure!.write[1]);
+      this._pressure!.swap();
     }
 
-    this.gradienSubtractProgram!.bind();
-    gl.uniform2f(this.gradienSubtractProgram!.uniforms['texelSize'] as WebGLUniformLocation, 1.0 / this.textureWidth, 1.0 / this.textureHeight);
-    gl.uniform1i(this.gradienSubtractProgram!.uniforms['uPressure'] as WebGLUniformLocation, this.pressure!.read[2]);
-    gl.uniform1i(this.gradienSubtractProgram!.uniforms['uVelocity'] as WebGLUniformLocation, this.velocity!.read[2]);
-    this.blit!(this.velocity!.write[1]);
-    this.velocity!.swap();
+    this._gradienSubtractProgram!.bind();
+    gl.uniform2f(this._gradienSubtractProgram!.uniforms['texelSize'] as WebGLUniformLocation, 1.0 / this._textureWidth, 1.0 / this._textureHeight);
+    gl.uniform1i(this._gradienSubtractProgram!.uniforms['uPressure'] as WebGLUniformLocation, this._pressure!.read[2]);
+    gl.uniform1i(this._gradienSubtractProgram!.uniforms['uVelocity'] as WebGLUniformLocation, this._velocity!.read[2]);
+    this._blit!(this._velocity!.write[1]);
+    this._velocity!.swap();
 
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-    this.displayProgram!.bind();
-    gl.uniform1i(this.displayProgram!.uniforms['uTexture'] as WebGLUniformLocation, this.density!.read[2]);
-    this.blit!(null);
+    this._displayProgram!.bind();
+    gl.uniform1i(this._displayProgram!.uniforms['uTexture'] as WebGLUniformLocation, this._density!.read[2]);
+    this._blit!(null);
 
-    this.animationFrameId = requestAnimationFrame(this.update);
+    this._animationFrameId = requestAnimationFrame(this._update);
   };
 
+    /**
+     * Applies a splat effect at the specified coordinates with the given velocity and color.
+     * This method updates both the velocity and density textures based on the splat parameters.
+     * @param x The x-coordinate of the splat in canvas space.
+     * @param y The y-coordinate of the splat in canvas space.
+     * @param dx The x-component of the velocity applied by the splat.
+     * @param dy The y-component of the velocity applied by the splat.
+     * @param color The color to apply to the density texture.
+     */
   private splat(x: number, y: number, dx: number, dy: number, color: number[]) {
-    const gl = this.gl!;
+    const gl = this._gl!;
     const canvas = this.swirlCanvas.nativeElement;
 
-    this.splatProgram!.bind();
-    gl.uniform1i(this.splatProgram!.uniforms['uTarget'] as WebGLUniformLocation, this.velocity!.read[2]);
-    gl.uniform1f(this.splatProgram!.uniforms['aspectRatio'] as WebGLUniformLocation, canvas.width / canvas.height);
-    gl.uniform2f(this.splatProgram!.uniforms['point'] as WebGLUniformLocation, x / canvas.width, 1.0 - y / canvas.height);
-    gl.uniform3f(this.splatProgram!.uniforms['color'] as WebGLUniformLocation, dx, -dy, 1.0);
-    gl.uniform1f(this.splatProgram!.uniforms['radius'] as WebGLUniformLocation, this.config.SPLAT_RADIUS);
-    this.blit!(this.velocity!.write[1]);
-    this.velocity!.swap();
+    this._splatProgram!.bind();
+    gl.uniform1i(this._splatProgram!.uniforms['uTarget'] as WebGLUniformLocation, this._velocity!.read[2]);
+    gl.uniform1f(this._splatProgram!.uniforms['aspectRatio'] as WebGLUniformLocation, canvas.width / canvas.height);
+    gl.uniform2f(this._splatProgram!.uniforms['point'] as WebGLUniformLocation, x / canvas.width, 1.0 - y / canvas.height);
+    gl.uniform3f(this._splatProgram!.uniforms['color'] as WebGLUniformLocation, dx, -dy, 1.0);
+    gl.uniform1f(this._splatProgram!.uniforms['radius'] as WebGLUniformLocation, this._config.SPLAT_RADIUS);
+    this._blit!(this._velocity!.write[1]);
+    this._velocity!.swap();
 
-    gl.uniform1i(this.splatProgram!.uniforms['uTarget'] as WebGLUniformLocation, this.density!.read[2]);
-    gl.uniform3f(this.splatProgram!.uniforms['color'] as WebGLUniformLocation, color[0] * 0.3, color[1] * 0.3, color[2] * 0.3);
-    this.blit!(this.density!.write[1]);
-    this.density!.swap();
+    gl.uniform1i(this._splatProgram!.uniforms['uTarget'] as WebGLUniformLocation, this._density!.read[2]);
+    gl.uniform3f(this._splatProgram!.uniforms['color'] as WebGLUniformLocation, color[0] * 0.3, color[1] * 0.3, color[2] * 0.3);
+    this._blit!(this._density!.write[1]);
+    this._density!.swap();
   }
 
+  /**
+   * 
+   * @param amount The number of splats to create.
+   * This method generates multiple splats with random positions, velocities, and colors.
+   */
   private multipleSplats(amount: number) {
     const canvas = this.swirlCanvas.nativeElement;
     for (let i = 0; i < amount; i++) {
@@ -718,6 +813,10 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+   * Resizes the canvas to match the window dimensions.
+   * This method ensures that the canvas covers the entire viewport and updates the framebuffers accordingly.
+   */
   private resizeCanvas() {
     const canvas = this.swirlCanvas.nativeElement;
     if (canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) {
@@ -729,23 +828,33 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+   * 
+   * @param e The mouse event to handle.
+   * This method updates the pointer state based on mouse movement, allowing for interactive effects.
+   */
   private onMouseMove = (e: MouseEvent) => {
     // Only trigger effect when mouse actually moves
-    this.pointers[0].moved = true;
-    this.pointers[0].down = false; // Remove continuous effect
-    this.pointers[0].dx = (e.clientX - this.pointers[0].x) * 10.0;
-    this.pointers[0].dy = (e.clientY - this.pointers[0].y) * 10.0;
-    this.pointers[0].x = e.clientX;
-    this.pointers[0].y = e.clientY;
+    this._pointers[0].moved = true;
+    this._pointers[0].down = false; // Remove continuous effect
+    this._pointers[0].dx = (e.clientX - this._pointers[0].x) * 10.0;
+    this._pointers[0].dy = (e.clientY - this._pointers[0].y) * 10.0;
+    this._pointers[0].x = e.clientX;
+    this._pointers[0].y = e.clientY;
     // Update color for beautiful effects only on movement
-    this.pointers[0].color = [Math.random() + 0.2, Math.random() + 0.2, Math.random() + 0.2];
+    this._pointers[0].color = [Math.random() + 0.2, Math.random() + 0.2, Math.random() + 0.2];
   };
 
+  /**
+   * Handles touch move events to update pointer positions and states.
+   * This method allows for touch interactions to affect the fluid simulation.
+   * @param e The touch event to handle.
+   */
   private onTouchMove = (e: TouchEvent) => {
     e.preventDefault();
     const touches = e.targetTouches;
     for (let i = 0; i < touches.length; i++) {
-      const pointer = this.pointers[i];
+      const pointer = this._pointers[i];
       if (pointer) {
         pointer.moved = pointer.down;
         pointer.dx = (touches[i].pageX - pointer.x) * 10.0;
@@ -756,17 +865,26 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
     }
   };
 
+  /**
+   * Handles mouse down events to initiate interaction with the fluid simulation.
+   * This method sets the pointer state to indicate that the mouse button is pressed.
+   */
   private onMouseDown = () => {
-    this.pointers[0].down = true;
-    this.pointers[0].color = [Math.random() + 0.2, Math.random() + 0.2, Math.random() + 0.2];
+    this._pointers[0].down = true;
+    this._pointers[0].color = [Math.random() + 0.2, Math.random() + 0.2, Math.random() + 0.2];
   };
 
+  /**
+   * 
+   * @param e The touch start event to handle.
+   * This method initializes pointers for touch interactions, allowing for multiple touch points to affect the fluid
+   */
   private onTouchStart = (e: TouchEvent) => {
     e.preventDefault();
     const touches = e.targetTouches;
     for (let i = 0; i < touches.length; i++) {
-      if (i >= this.pointers.length) {
-        this.pointers.push({
+      if (i >= this._pointers.length) {
+        this._pointers.push({
           id: touches[i].identifier,
           x: touches[i].pageX,
           y: touches[i].pageY,
@@ -777,30 +895,43 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
           color: [Math.random() + 0.2, Math.random() + 0.2, Math.random() + 0.2]
         });
       } else {
-        this.pointers[i].id = touches[i].identifier;
-        this.pointers[i].down = true;
-        this.pointers[i].x = touches[i].pageX;
-        this.pointers[i].y = touches[i].pageY;
-        this.pointers[i].color = [Math.random() + 0.2, Math.random() + 0.2, Math.random() + 0.2];
+        this._pointers[i].id = touches[i].identifier;
+        this._pointers[i].down = true;
+        this._pointers[i].x = touches[i].pageX;
+        this._pointers[i].y = touches[i].pageY;
+        this._pointers[i].color = [Math.random() + 0.2, Math.random() + 0.2, Math.random() + 0.2];
       }
     }
   };
 
+    /**
+     * Handles mouse leave events to reset the pointer state.
+     * This method stops the interaction with the fluid simulation when the mouse leaves the canvas area.
+     */
   private onMouseLeave = () => {
-    this.pointers[0].down = false;
+    this._pointers[0].down = false;
   };
 
+    /**
+     * Handles touch end events to update pointer states when touches are released.
+     * This method allows for touch interactions to stop affecting the fluid simulation.
+     * @param e The touch event to handle.
+     */
   private onTouchEnd = (e: TouchEvent) => {
     const touches = e.changedTouches;
     for (let i = 0; i < touches.length; i++) {
-      for (let j = 0; j < this.pointers.length; j++) {
-        if (touches[i].identifier === this.pointers[j].id) {
-          this.pointers[j].down = false;
+      for (let j = 0; j < this._pointers.length; j++) {
+        if (touches[i].identifier === this._pointers[j].id) {
+          this._pointers[j].down = false;
         }
       }
     }
   };
 
+    /**
+     * Handles window resize events to adjust the canvas size and update the fluid simulation.
+     * This method ensures that the canvas always fits the viewport and updates the framebuffers accordingly.
+     */
   private onResize = () => {
     this.resizeCanvas();
   };

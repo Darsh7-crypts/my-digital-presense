@@ -22,6 +22,10 @@ interface SkillCategory {
 export class Skills {
   public activeCategory: string = 'Frontend Development'; // Track active filter category
   
+  /**
+   * This component represents the skills section of the portfolio.
+   * It displays various skill categories and their respective skills.
+   */
   public readonly skillCategories: SkillCategory[] = [
     {
       title: 'Frontend Development',

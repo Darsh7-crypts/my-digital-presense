@@ -1,11 +1,5 @@
 import { Component } from '@angular/core';
 
-interface SocialLink {
-  name: string;
-  url: string;
-  icon: string;
-}
-
 interface ContactInfo {
   email: string;
   phone: string;
@@ -14,7 +8,6 @@ interface ContactInfo {
 
 @Component({
   selector: 'app-contact',
-  imports: [],
   templateUrl: './contact.html',
   styleUrl: './contact.css'
 })

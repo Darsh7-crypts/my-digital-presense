@@ -9,17 +9,29 @@ import { PortfolioDataService, ExperienceItem } from '../../services/portfolio-d
   styleUrl: './experience.css'
 })
 export class Experience implements OnInit {
-  experience: ExperienceItem[] = [];
-  expandedJob: number | null = null;
-
-
+  public experience: ExperienceItem[] = [];
+  private _expandedJob: number | null = null;
+  /**
+   * This component represents the experience section of the portfolio.
+   * It displays a list of work experiences with details such as job title, company, location, period, and description.
+   * An array of experience items, each containing details about a specific work experience.
+   */
   constructor(private portfolioDataService: PortfolioDataService) { }
 
+  /**
+   * OnInit lifecycle hook, called after Angular initializes the component's data-bound properties.
+   * Fetches experience data from the PortfolioDataService when the component initializes.
+   */
   ngOnInit(): void {
     this.experience = this.portfolioDataService.getExperience();
   }
 
-  calculateDuration(period: string): string {
+  /**
+   * Calculates the duration of the job based on the period string.
+   * @param period The period string in format "Jan 2022 - Present" or "Jun 2020 - Dec 2021".
+   * @returns A string representing the duration, e.g., "2 years", "1 year", "< 1 year".
+   */
+  public calculateDuration(period: string): string {
     // Extract years from period string like "Jan 2022 - Present" or "Jun 2020 - Dec 2021"
     const parts = period.split(' - ');
     if (parts.length !== 2) return 'N/A';
@@ -29,36 +41,50 @@ export class Experience implements OnInit {
     
     // Simple duration calculation
     if (endPart === 'Present') {
-      const startYear = this.extractYear(startPart);
+      const startYear = this._extractYear(startPart);
       const currentYear = new Date().getFullYear();
       const duration = currentYear - startYear;
       return duration > 1 ? `${duration}+ years` : `${duration}+ year`;
     }
     
-    const startYear = this.extractYear(startPart);
-    const endYear = this.extractYear(endPart);
+    const startYear = this._extractYear(startPart);
+    const endYear = this._extractYear(endPart);
     const duration = endYear - startYear;
     
     if (duration === 0) return '< 1 year';
     return duration === 1 ? '1 year' : `${duration} years`;
   }
 
-  private extractYear(dateStr: string): number {
+  /**
+   * Extracts the year from a date string formatted as "Jan 2022" or similar.
+   * @param dateStr The date string to extract the year from.
+   * @returns The extracted year as a number.
+   */
+  private _extractYear(dateStr: string): number {
     const parts = dateStr.split(' ');
     return parseInt(parts[parts.length - 1]);
   }
 
-  toggleAccordion(jobId: number): void {
-    if (this.expandedJob === jobId) {
+  /**
+   * Toggles the expansion of a job's details in the experience section.
+   * @param jobId The ID of the job to toggle.
+   */
+  public toggleAccordion(jobId: number): void {
+    if (this._expandedJob === jobId) {
       // If the same job is clicked again, collapse it
-      this.expandedJob = null;
+      this._expandedJob = null;
     } else {
       // Expand the clicked job and collapse any previously expanded job
-      this.expandedJob = jobId;
+      this._expandedJob = jobId;
     }
   }
 
-  isExpanded(jobId: number): boolean {
-    return this.expandedJob === jobId;
+  /**
+   * Checks if a job is currently expanded.
+   * @param jobId The ID of the job to check.
+   * @returns True if the job is expanded, false otherwise.
+   */
+  public isExpanded(jobId: number): boolean {
+    return this._expandedJob === jobId;
   }
 }

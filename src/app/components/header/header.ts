@@ -10,18 +10,30 @@ type SectionId = 'home' | 'experience' | 'projects' | 'skills' | 'education' | '
 })
 export class Header implements OnInit {
   public activeSection: SectionId = 'home';
+  @HostListener('window:scroll')
 
+  /**
+   * This component represents the header of the portfolio.
+   * It includes navigation links to different sections of the portfolio.
+   * The active section is highlighted based on the current scroll position.
+   */
   public ngOnInit(): void {
     // Initialize active section detection
-    this.updateActiveSection();
+    this._updateActiveSection();
   }
 
-  @HostListener('window:scroll')
+  /**
+   * Handles window scroll events to update the active section based on the current scroll position.
+   */
   public onWindowScroll(): void {
-    this.updateActiveSection();
+    this._updateActiveSection();
   }
 
-  private updateActiveSection(): void {
+  /**
+   * Updates the active section based on the current scroll position.
+   * It checks the position of each section and sets the activeSection accordingly.
+   */
+  private _updateActiveSection(): void {
     const sections: SectionId[] = ['home', 'experience', 'projects', 'skills', 'education','achievement', 'contact'];
     const scrollPosition = window.scrollY + 100; // Offset for header height
 
@@ -38,14 +50,13 @@ export class Header implements OnInit {
       }
     }
   }
-
-  // Navigation link click handler for smooth scrolling
-  onNavLinkClick() {
-    // Smooth scroll behavior is handled by CSS scroll-behavior or can be enhanced here
-  }
-
+  
+  /**
+   * Navigates to the specified section by scrolling to its ID.
+   * @param section The section ID to navigate to.
+   */
   // Check if a navigation item should be highlighted
-  isActive(section: string): boolean {
+  public isActive(section: string): boolean {
     return this.activeSection === section;
   }
 }

@@ -34,18 +34,27 @@ export class Projects implements OnInit, OnDestroy {
   public autoPlayEnabled: boolean = false;
 
   // Touch/Swipe properties
-  private touchStartX: number = 0;
-  private touchEndX: number = 0;
+  private _touchStartX: number = 0;
+  private _touchEndX: number = 0;
   private readonly minSwipeDistance: number = 50;
 
-  public constructor(private portfolioDataService: PortfolioDataService) { }
+  constructor(private portfolioDataService: PortfolioDataService) { }
 
+  /**
+   * This component represents the projects section of the portfolio.
+   * It displays a list of projects with details such as title, description, technologies used, and status.
+   * It includes features like filtering by category, sliding through projects, and expanding project details.
+   */
   public ngOnInit(): void {
     this.projects = this.portfolioDataService.getProjects();
     this.filteredProjects = this.projects;
     this.updateSliderSettings();
   }
 
+  /**
+   * Filters projects based on the selected category.
+   * @param category The category to filter projects by.
+   */
   public updateSliderSettings(): void {
     // Show only 1 card by default across all screen sizes
     this.visibleCards = 1;
@@ -63,29 +72,53 @@ export class Projects implements OnInit, OnDestroy {
     // Reset slide position when projects change
     this.currentSlide = 0;
   }
-
+  
+  /**
+   * Filters projects based on the selected category.
+   * @param category The category to filter projects by.
+   */
   public nextProject(): void {
     if (this.currentSlide < this.filteredProjects.length - this.visibleCards) {
       this.currentSlide++;
     }
   }
 
+  /**
+   * 
+   * @param category The category to filter projects by.
+   * Filters the projects based on the selected category.
+   */
   public previousProject(): void {
     if (this.currentSlide > 0) {
       this.currentSlide--;
     }
   }
 
+  /**
+   * 
+   * @param index The index of the project to toggle.
+   * Toggles the expansion of a project to show more details.
+   */
   public goToSlide(index: number): void {
     const maxSlide = Math.max(0, this.filteredProjects.length - this.visibleCards);
     this.currentSlide = Math.min(index, maxSlide);
   }
 
+  /**
+   * 
+   * @param event The event object from the touch start event.
+   * Records the starting position of a touch event for swipe detection.
+   */
   @HostListener('window:resize', ['$event'])
   public onResize(event: any): void {
     this.updateSliderSettings();
   }
 
+  /**
+   * 
+   * @param event The event object from the touch end event.
+   * Handles the swipe gesture to navigate between projects.
+   */
   @HostListener('keydown', ['$event'])
   public onKeyDown(event: KeyboardEvent): void {
     if (event.key === 'ArrowLeft') {
@@ -95,6 +128,10 @@ export class Projects implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Starts the auto-play feature for the project slider.
+   * It automatically cycles through projects every 4 seconds.
+   */
   public startAutoPlay(): void {
     if (this.autoPlayEnabled) {
       this.autoPlayInterval = setInterval(() => {
@@ -107,17 +144,28 @@ export class Projects implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Stops the auto-play feature for the project slider.
+   */
   public ngOnDestroy(): void {
-    this.stopAutoPlay();
+    this._stopAutoPlay();
   }
 
-  private stopAutoPlay(): void {
+  /**
+   * Stops the auto-play interval if it is running.
+   * This is called when the component is destroyed to prevent memory leaks.
+   */
+  private _stopAutoPlay(): void {
     if (this.autoPlayInterval) {
       clearInterval(this.autoPlayInterval);
       this.autoPlayInterval = null;
     }
   }
 
+  /**
+   * Filters projects based on the selected category.
+   * @param category The category to filter projects by.
+   */
   public getStatusColor(status: string): string {
     switch (status) {
       case 'Production': return 'success';
@@ -127,17 +175,31 @@ export class Projects implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * 
+   * @param event The event object from the touch start event.
+   * Records the starting position of a touch event for swipe detection.
+   */
   public onTouchStart(event: TouchEvent): void {
-    this.touchStartX = event.changedTouches[0].screenX;
+    this._touchStartX = event.changedTouches[0].screenX;
   }
 
+  /**
+   * 
+   * @param event The event object from the touch end event.
+   * Handles the swipe gesture to navigate between projects.
+   */
   public onTouchEnd(event: TouchEvent): void {
-    this.touchEndX = event.changedTouches[0].screenX;
-    this.handleSwipe();
+    this._touchEndX = event.changedTouches[0].screenX;
+    this._handleSwipe();
   }
 
-  private handleSwipe(): void {
-    const swipeDistance = this.touchStartX - this.touchEndX;
+  /**
+   * Handles the swipe gesture to navigate between projects.
+   * If the swipe distance exceeds the minimum threshold, it navigates to the next or previous project.
+   */
+  private _handleSwipe(): void {
+    const swipeDistance = this._touchStartX - this._touchEndX;
     
     if (Math.abs(swipeDistance) >= this.minSwipeDistance) {
       if (swipeDistance > 0) {
@@ -150,6 +212,11 @@ export class Projects implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Toggles the expansion of a project to show more details.
+   * @param projectId The ID of the project to toggle.
+   * @param event Optional event parameter to prevent event bubbling.
+   */
   public toggleAccordion(projectId: number, event?: Event): void {
     // Prevent event bubbling which could cause unwanted toggles
     if (event) {
@@ -178,6 +245,11 @@ export class Projects implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Checks if a project is currently expanded.
+   * @param projectId The ID of the project to check.
+   * @returns True if the project is expanded, false otherwise.
+   */
   public isExpanded(projectId: number): boolean {
     return this.expandedProject === projectId;
   }

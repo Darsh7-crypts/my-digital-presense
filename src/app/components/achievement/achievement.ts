@@ -9,17 +9,25 @@ import { PortfolioDataService, Achievement as AchievementType } from '../../serv
   styleUrl: './achievement.css'
 })
 export class Achievement implements OnInit {
-  achievements: AchievementType[] = [];
-  categories: string[] = ['Awards', 'Leadership'];
-  activeCategory: string = 'Awards';
+  private _achievements: AchievementType[] = [];
+  public categories: string[] = ['Awards', 'Leadership'];
+  public activeCategory: string = 'Awards';
 
   constructor(private portfolioDataService: PortfolioDataService) { }
 
-  ngOnInit(): void {
-    this.achievements = this.portfolioDataService.getAchievements();
+   // OnInit lifecycle hook, called after Angular initializes the component's data-bound properties
+  public ngOnInit(): void {
+    // Fetch achievement data from the PortfolioDataService when the component initializes
+    this._achievements = this.portfolioDataService.getAchievements();
   }
 
-  getAchievementsByCategory(category: string): AchievementType[] {
-    return this.achievements.filter(a => a.category === category);
+  /**
+   * Filters the achievements array by a given category.
+   * @param category The category string to filter achievements by.
+   * @returns An array of AchievementType objects belonging to the specified category.
+   */
+  public getAchievementsByCategory(category: string): AchievementType[] {
+    // Use the filter method to return only achievements that match the provided category
+    return this._achievements.filter(a => a.category === category);
   }
 }

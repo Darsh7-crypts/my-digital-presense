@@ -30,10 +30,13 @@ import { SwirlCursorComponent } from "./components/swirl-cursor/swirl-cursor";
   styleUrl: './app.css'
 })
 export class App implements OnInit {
-  public title = 'My Professional Portfolio';
   public isLoading = false;
   public showScrollButton = false;
 
+  /**
+   * This component is the root of the Angular application.
+   * It initializes the loading state and handles scroll events to show or hide the scroll to top button.
+   */
   public ngOnInit(): void {
     // Show loading initially
     this.isLoading = true;
@@ -44,12 +47,19 @@ export class App implements OnInit {
     }, 1500);
   }
 
+  /**
+   * Listens to the window scroll event to show or hide the scroll to top button.
+   * The button is shown when the user scrolls down more than 300 pixels.
+   */
   @HostListener('window:scroll', [])
   public onWindowScroll(): void {
     // Show scroll to top button when user scrolls down 300px
     this.showScrollButton = window.pageYOffset > 300;
   }
 
+  /**
+   * Scrolls to the top of the page smoothly.
+   */
   public scrollToTop(): void {
     window.scrollTo({
       top: 0,
@@ -57,7 +67,10 @@ export class App implements OnInit {
     });
   }
 
-  // Method to scroll to specific section
+  /**
+   * Scrolls to a specific section of the page.
+   * @param sectionId The ID of the section to scroll to.
+   */
   public scrollToSection(sectionId: string): void {
     const element = document.getElementById(sectionId);
     if (element) {
