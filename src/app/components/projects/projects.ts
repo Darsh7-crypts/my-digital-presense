@@ -24,7 +24,7 @@ export class Projects implements OnInit, OnDestroy {
   public projects: Project[] = [];
   public filteredProjects: Project[] = [];
   public selectedCategory: string = 'All';
-  public expandedProject: number | null = null;
+  public expandedProject: any;
   
   // Slider properties
   public currentSlide: number = 0;
