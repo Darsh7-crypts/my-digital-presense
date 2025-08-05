@@ -118,7 +118,7 @@ export class PortfolioDataService {
       {
         id: 1,
         title: 'Electrification-X',
-        category: 'IT Software Developer',
+        category: 'Frontend',
         description: 'he Electrification-X project, within this project domain, monitors and controls EV charging station loads using graphical representations and single-line diagrams. One application which had multiple feature sets (PAM, EVC , CSE , SM etc.) managed with the help of micro front-end library NX. front-end used SiMPL (siemens internal UI -UX library) for building angular components.',
         features: [
           'Developed and optimized web applications using Angular (v13-17), improving performance and usability.',
