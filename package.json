@@ -19,7 +19,6 @@
       }
     ]
   },
-  "private": true,
   "dependencies": {
     "@angular/cdk": "^20.1.2",
     "@angular/common": "^20.0.0",
