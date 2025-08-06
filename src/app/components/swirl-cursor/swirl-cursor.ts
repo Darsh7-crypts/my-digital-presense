@@ -78,6 +78,11 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
   private _animationFrameId: number = 0;
   private _ext: WebGLExtensions | null = null;
 
+  // Add mobile detection and auto-animation properties
+  private _isMobile: boolean = false;
+  private _autoAnimationTimer: number = 0;
+  private _lastAutoSplat: number = 0;
+
   
   private _config: Fluid_config = {
     TEXTURE_DOWNSAMPLE: 1,
@@ -88,6 +93,24 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
     _curl: 28,
     SPLAT_RADIUS: 0.004
   };
+
+  /**
+   * Adjusts configuration based on device capabilities
+   */
+  private adjustConfigForDevice(): void {
+    if (this._isMobile) {
+      // Optimize for mobile performance
+      this._config = {
+        TEXTURE_DOWNSAMPLE: 2, // Reduce texture resolution for better performance
+        DENSITY_DISSIPATION: 0.96, // Slightly faster dissipation
+        VELOCITY_DISSIPATION: 0.98,
+        PRESSURE_DISSIPATION: 0.7,
+        PRESSURE_ITERATIONS: 15, // Reduce iterations for better performance
+        _curl: 20, // Reduce curl for better performance
+        SPLAT_RADIUS: 0.006 // Slightly larger splat radius for mobile
+      };
+    }
+  }
 
   private _pointers: Pointer[] = [];
   private _splatStack: number[] = [];
@@ -115,6 +138,8 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
   private _lastTime: number = Date.now();
   private _blit: ((destination: WebGLFramebuffer | null) => void) | null = null;
 
+  private touchMoveOptions = { passive: false };
+
   /**
    * Initializes the component, sets up WebGL context, and prepares shaders and framebuffers.
    * This method is called after the view has been initialized.
@@ -123,6 +148,9 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
    * @throws {Error} If WebGL context cannot be created or shaders fail to compile.
    */
   public ngAfterViewInit() {
+    // Detect mobile devices
+    this._isMobile = this.detectMobile();
+    
     const canvas = this.swirlCanvas.nativeElement;
     // Set canvas to full viewport size
     canvas.width = window.innerWidth;
@@ -130,25 +158,45 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
     canvas.style.width = '100vw';
     canvas.style.height = '100vh';
 
-    const context = this._getWebGLContext(canvas);
-    this._gl = context.gl;
-    this._ext = context.ext;
+    try {
+      const context = this._getWebGLContext(canvas);
+      this._gl = context.gl;
+      this._ext = context.ext;
 
-    this.initPointers();
-    this.initShaders();
-    this.initFramebuffers();
-    this.initBlit();
+      // Adjust configuration based on device
+      this.adjustConfigForDevice();
 
-    // Listen to global mouse events instead of just canvas events
-    document.addEventListener('mousemove', this.onMouseMove);
-    document.addEventListener('touchmove', this.onTouchMove);
-    document.addEventListener('mousedown', this.onMouseDown);
-    document.addEventListener('touchstart', this.onTouchStart);
-    document.addEventListener('mouseleave', this.onMouseLeave);
-    document.addEventListener('touchend', this.onTouchEnd);
-    window.addEventListener('resize', this.onResize);
+      this.initPointers();
+      this.initShaders();
+      this.initFramebuffers();
+      this.initBlit();
 
-    this._update();
+      // Listen to global mouse events instead of just canvas events
+      document.addEventListener('mousemove', this.onMouseMove);
+      document.addEventListener('touchmove', this.onTouchMove, this.touchMoveOptions);
+      document.addEventListener('mousedown', this.onMouseDown);
+      document.addEventListener('touchstart', this.onTouchStart);
+      document.addEventListener('mouseleave', this.onMouseLeave);
+      document.addEventListener('touchend', this.onTouchEnd);
+      window.addEventListener('resize', this.onResize);
+      
+      // Additional mobile event listeners
+      if (this._isMobile) {
+        window.addEventListener('orientationchange', this.onOrientationChange);
+        screen.orientation?.addEventListener('change', this.onOrientationChange);
+      }
+
+      // Start automatic animation for mobile or add periodic splats
+      if (this._isMobile) {
+        this.startAutoAnimation();
+      }
+
+      this._update();
+    } catch (error) {
+      console.warn('WebGL not supported or failed to initialize:', error);
+      // Fallback: Create CSS animation instead of hiding canvas
+      this.createFallbackAnimation();
+    }
   }
 
     /**
@@ -160,13 +208,22 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
   public ngOnDestroy() {
     // Remove global event listeners
     document.removeEventListener('mousemove', this.onMouseMove);
-    document.removeEventListener('touchmove', this.onTouchMove);
+    document.removeEventListener('touchmove', this.onTouchMove, this.touchMoveOptions as any);
     document.removeEventListener('mousedown', this.onMouseDown);
     document.removeEventListener('touchstart', this.onTouchStart);
     document.removeEventListener('mouseleave', this.onMouseLeave);
     document.removeEventListener('touchend', this.onTouchEnd);
     window.removeEventListener('resize', this.onResize);
+    
+    // Remove mobile-specific listeners
+    if (this._isMobile) {
+      window.removeEventListener('orientationchange', this.onOrientationChange);
+      screen.orientation?.removeEventListener('change', this.onOrientationChange);
+    }
+    
+    // Clean up animations
     cancelAnimationFrame(this._animationFrameId);
+    this.stopAutoAnimation();
   }
 
     /**
@@ -175,12 +232,23 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
      * @returns An object containing the WebGL context and extensions.
      */
   private _getWebGLContext(canvas: HTMLCanvasElement) {
-    const params = { alpha: false, depth: false, stencil: false, antialias: false };
+    const params = { 
+      alpha: false, 
+      depth: false, 
+      stencil: false, 
+      antialias: false,
+      preserveDrawingBuffer: false,
+      powerPreference: 'default' // Better for mobile battery
+    };
 
     let gl = canvas.getContext('webgl2', params) as WebGLRenderingContext;
     const isWebGL2 = !!gl;
     if (!isWebGL2) {
       gl = (canvas.getContext('webgl', params) || canvas.getContext('experimental-webgl', params)) as WebGLRenderingContext;
+    }
+
+    if (!gl) {
+      throw new Error('WebGL not supported');
     }
 
     let halfFloat: any;
@@ -829,6 +897,73 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
+   * Detects if the current device is a mobile device
+   * @returns {boolean} True if mobile device detected
+   */
+  private detectMobile(): boolean {
+    const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+    return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase()) ||
+           ('ontouchstart' in window) ||
+           (navigator.maxTouchPoints > 0);
+  }
+
+  /**
+   * Starts automatic animation for mobile devices to ensure the effect is visible
+   */
+  private startAutoAnimation(): void {
+    // Add initial splats for mobile
+    this._splatStack.push(3);
+    
+    // Set up periodic auto-splats for mobile devices
+    this._autoAnimationTimer = window.setInterval(() => {
+      if (Date.now() - this._lastAutoSplat > 2000) { // Every 2 seconds
+        this._splatStack.push(1);
+        this._lastAutoSplat = Date.now();
+      }
+    }, 2000);
+  }
+
+  /**
+   * Stops automatic animation
+   */
+  private stopAutoAnimation(): void {
+    if (this._autoAnimationTimer) {
+      clearInterval(this._autoAnimationTimer);
+      this._autoAnimationTimer = 0;
+    }
+  }
+
+  /**
+   * Creates a fallback CSS animation when WebGL is not available
+   */
+  private createFallbackAnimation(): void {
+    const canvas = this.swirlCanvas.nativeElement;
+    canvas.style.background = `
+      radial-gradient(circle at 20% 50%, rgba(30, 0, 300, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(255, 20, 147, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(0, 191, 255, 0.3) 0%, transparent 50%),
+      linear-gradient(45deg, rgba(30, 0, 300, 0.1), rgba(255, 20, 147, 0.1))
+    `;
+    canvas.style.animation = 'fallbackSwirl 10s ease-in-out infinite alternate';
+    
+    // Add CSS keyframes for fallback animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes fallbackSwirl {
+        0% {
+          background-position: 0% 50%, 100% 0%, 50% 100%, 0% 0%;
+          filter: hue-rotate(0deg);
+        }
+        100% {
+          background-position: 100% 50%, 0% 100%, 50% 0%, 100% 100%;
+          filter: hue-rotate(90deg);
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  /**
    * 
    * @param e The mouse event to handle.
    * This method updates the pointer state based on mouse movement, allowing for interactive effects.
@@ -856,13 +991,17 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
     for (let i = 0; i < touches.length; i++) {
       const pointer = this._pointers[i];
       if (pointer) {
-        pointer.moved = pointer.down;
-        pointer.dx = (touches[i].pageX - pointer.x) * 10.0;
-        pointer.dy = (touches[i].pageY - pointer.y) * 10.0;
+        pointer.moved = true; // Always set moved for touch
+        pointer.dx = (touches[i].pageX - pointer.x) * 15.0; // Increased sensitivity for mobile
+        pointer.dy = (touches[i].pageY - pointer.y) * 15.0;
         pointer.x = touches[i].pageX;
         pointer.y = touches[i].pageY;
+        // Update color for mobile touch effects
+        pointer.color = [Math.random() + 0.3, Math.random() + 0.3, Math.random() + 0.3];
       }
     }
+    // Reset auto-splat timer when user interacts
+    this._lastAutoSplat = Date.now();
   };
 
   /**
@@ -891,17 +1030,20 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
           dx: 0,
           dy: 0,
           down: true,
-          moved: false,
-          color: [Math.random() + 0.2, Math.random() + 0.2, Math.random() + 0.2]
+          moved: true, // Set moved to true for immediate effect on touch
+          color: [Math.random() + 0.3, Math.random() + 0.3, Math.random() + 0.3]
         });
       } else {
         this._pointers[i].id = touches[i].identifier;
         this._pointers[i].down = true;
+        this._pointers[i].moved = true; // Set moved to true for immediate effect
         this._pointers[i].x = touches[i].pageX;
         this._pointers[i].y = touches[i].pageY;
-        this._pointers[i].color = [Math.random() + 0.2, Math.random() + 0.2, Math.random() + 0.2];
+        this._pointers[i].color = [Math.random() + 0.3, Math.random() + 0.3, Math.random() + 0.3];
       }
     }
+    // Reset auto-splat timer when user interacts
+    this._lastAutoSplat = Date.now();
   };
 
     /**
@@ -934,5 +1076,19 @@ export class SwirlCursorComponent implements AfterViewInit, OnDestroy {
      */
   private onResize = () => {
     this.resizeCanvas();
+  };
+
+  /**
+   * Handles orientation change events on mobile devices
+   */
+  private onOrientationChange = () => {
+    // Add a small delay to allow the viewport to settle after orientation change
+    setTimeout(() => {
+      this.resizeCanvas();
+      // Trigger some animation after orientation change
+      if (this._isMobile) {
+        this._splatStack.push(2);
+      }
+    }, 100);
   };
 }
