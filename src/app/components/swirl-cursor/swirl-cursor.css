@@ -61,4 +61,29 @@ canvas {
   height: 100vh;
   z-index: -1;
   pointer-events: none;
+  /* Ensure proper rendering on mobile devices */
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  canvas {
+    /* Ensure canvas covers full viewport on mobile */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    /* Prevent scrolling and improve performance */
+    overscroll-behavior: contain;
+  }
+  
+  /* Reduce visual complexity on smaller screens if needed */
+  .a-title,
+  .a-second-title {
+    will-change: transform;
+  }
 }

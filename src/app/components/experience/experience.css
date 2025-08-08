@@ -32,6 +32,21 @@
   border-radius: 2px;
 }
 
+.section-subtitle {
+  text-align: center;
+  font-size: 1.1rem;
+color: rgb(156 163 175/var(--tw-text-opacity,1));
+  margin-bottom: 0;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-header {
+  margin-bottom: 1rem;
+  
+}
+
 /* Compact Timeline */
 .timeline-compact {
   display: flex;
@@ -74,7 +89,7 @@
 
 .accordion-indicator {
   position: absolute;
-  top: 5rem;
+  top: 3rem;
   right: 1.25rem;
   width: 28px;
   height: 28px;
