@@ -128,7 +128,7 @@ describe('PortfolioDataService', () => {
       const electrificationX = projects.find(proj => proj.id === 1);
       expect(electrificationX).toBeTruthy();
       expect(electrificationX?.title).toBe('Electrification-X');
-      expect(electrificationX?.category).toBe('IT Software Developer');
+      expect(electrificationX?.category).toBe('Frontend');
       expect(electrificationX?.status).toBe('Production');
       expect(electrificationX?.duration).toBe('2 - Present');
     });

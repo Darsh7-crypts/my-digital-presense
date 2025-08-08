@@ -144,7 +144,7 @@ export class PortfolioDataService {
           'Collaborated with scrum teams, participated in sprint planning, standups, and backlog grooming.',
           'Comprehensive testing with 90% code coverage',
         ],
-        duration: '2 years',
+        duration: '1 years',
         status: 'Production',
         image: '',
 
