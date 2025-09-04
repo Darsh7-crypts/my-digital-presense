@@ -26,19 +26,17 @@
 }
 
 .topbar-toggle-btn {
-  background: transparent;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border: none;
   color: #fff;
   padding: 0.5rem;
-  border-radius: 2rem;
+  border-radius: 20px;
   width: auto;
-  height: 3.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
-  margin-left: auto;
 }
 
 .topbar-arrow-icon {
