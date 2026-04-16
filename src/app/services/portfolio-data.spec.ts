@@ -59,7 +59,7 @@ describe('PortfolioDataService', () => {
     it('should contain specific experience data', () => {
       const currentRole = experiences.find(exp => exp.id === 1);
       expect(currentRole).toBeTruthy();
-      expect(currentRole?.jobTitle).toBe('IT Software Developer & UI/UX Designer');
+      expect(currentRole?.jobTitle).toBe('Software Developer Engineer & UI/UX Designer');
       expect(currentRole?.company).toBe('Siemens Technology and Services PVT LTD');
       expect(currentRole?.location).toBe('Bangalore, India');
       expect(currentRole?.period).toBe('March 2023 - Present');
@@ -128,7 +128,7 @@ describe('PortfolioDataService', () => {
       const electrificationX = projects.find(proj => proj.id === 1);
       expect(electrificationX).toBeTruthy();
       expect(electrificationX?.title).toBe('Electrification-X');
-      expect(electrificationX?.category).toBe('IT Software Developer');
+      expect(electrificationX?.category).toBe('Software Developer Engineer');
       expect(electrificationX?.status).toBe('Production');
       expect(electrificationX?.duration).toBe('2 - Present');
     });

@@ -10,7 +10,7 @@ export class Home implements OnInit, OnDestroy {
   public displayedText = '';
   public showCursor = true;
   private _initialText = 'Hi,\nI\'m Darshan Bopalkar\nwho works as a';
-  private _jobTitles = ['Front End Developer', 'UI Developer', 'UX Designer', 'UI Designer'];
+  private _jobTitles = ['Front End Developer', 'Vibe Coder', 'UI Developer', 'AI Advocate', 'UI Designer'];
   private _typewriterInterval: any;
   private _cursorInterval: any;
   private _currentIndex = 0;

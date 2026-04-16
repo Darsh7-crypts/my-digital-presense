@@ -21,7 +21,7 @@ interface SkillCategory {
 })
 export class Skills {
   public activeCategory: string = 'Frontend Development'; // Track active filter category
-  
+
   /**
    * This component represents the skills section of the portfolio.
    * It displays various skill categories and their respective skills.
@@ -39,6 +39,19 @@ export class Skills {
         { name: 'CSS3/SASS', category: 'frontend', icon: '🎨' },
       ]
     },
+    {
+      title: 'Gen AI',
+      icon: '🤖',
+      skills: [
+        { name: 'GenAI Development', category: 'ai', icon: '🧠' },
+        { name: 'Siemens LLM Integration', category: 'ai', icon: '🔗' },
+        { name: 'Multi-Agent Systems', category: 'ai', icon: '🤝' },
+        { name: 'GitHub Copilot', category: 'ai', icon: '🚀' },
+        { name: 'Prompt Engineering', category: 'ai', icon: '✨' },
+        { name: 'Context Engineering', category: 'ai', icon: '📄' },
+      ]
+    },
+
     {
       title: 'Design & UX',
       icon: '🎨',
