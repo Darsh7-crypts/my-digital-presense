@@ -63,9 +63,15 @@
 }
 
 .achievement-header {
-  display: flex;
+  display: block;
   align-items: flex-start;
   margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+.achievement-topBar{
+  display: flex;
+  align-items: center;
   gap: 1rem;
 }
 
@@ -74,7 +80,6 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   background-clip: text;
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.1));
 }
 
@@ -83,9 +88,11 @@
 }
 
 .achievement-title {
+  color: black;
   display: flex;
-      justify-content: space-between;
+  justify-content: space-between;
   gap: 0.5rem;
+  font-size: 25px;
 }
 
 .achievement-info h3 {

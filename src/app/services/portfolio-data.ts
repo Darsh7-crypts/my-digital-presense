@@ -178,7 +178,7 @@ export class PortfolioDataService {
     return [
       {
         id: 1,
-        title: 'Werner von Siemens Award technology with purpose',
+        title: 'Werner von Siemens Award',
         category: 'Awards',
         issuer: 'Siemens',
         date: 'June 2022',

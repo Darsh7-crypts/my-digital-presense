@@ -15,18 +15,20 @@
          [attr.data-index]="i">
       
       <div class="achievement-header">
+        <div class="achievement-topBar">       
         <div class="achievement-icon">
           {{ achievement.icon }}
         </div>
+        <div class="achievement-title">
+          <h3>{{ achievement.title }}</h3>
+        <p class="achievement-date" *ngIf="achievement.category !== 'Leadership'">📅 {{ achievement.date }}</p>
+        </div>
+      </div>
+        <div class="issuer-info">
+          <span class="issuer">{{ achievement.issuer }}</span>
+          <span class="category">{{ achievement.category }}</span>
+        </div>
         <div class="achievement-info">
-          <div class="achievement-title">
-            <h3>{{ achievement.title }}</h3>
-          <p class="achievement-date" *ngIf="achievement.category !== 'Leadership'">📅 {{ achievement.date }}</p>
-          </div>
-          <div class="issuer-info">
-            <span class="issuer">{{ achievement.issuer }}</span>
-            <span class="category">{{ achievement.category }}</span>
-          </div>
           <div class="achievement-description" *ngIf="achievement.description">
             <pre>{{ achievement.description }}</pre>
           </div>
