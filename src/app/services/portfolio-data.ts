@@ -196,13 +196,22 @@ export class PortfolioDataService {
       },
       {
         id: 3,
+        title: 'Best Performer Award',
+        category: 'Awards',
+        issuer: 'Siemens',
+        date: 'March 2025',
+        icon: '🏆',
+        description: 'Recognized as the Best Performer for consistently completing all assigned tasks on time without spillover to the next sprint, while also taking up unplanned tasks to support the team.'
+      },
+      {
+        id: 4,
         title: 'Branding & Engagement Spark Team',
         category: 'Leadership',
         icon: '👑',
         description: `As administrator of the Branding & Engagement Spark team, I spearhead strategic branding initiatives, nurture creativity, and promote collaboration to elevate organizational engagement.Organized a variety of events, games, and team-building activities to foster a vibrant and connected workplace culture.`
       },
       {
-        id: 4,
+        id: 5,
         title: 'Scrum Master',
         category: 'Leadership',
         icon: '👑',

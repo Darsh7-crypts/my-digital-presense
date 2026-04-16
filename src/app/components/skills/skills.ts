@@ -37,6 +37,9 @@ export class Skills {
         { name: 'JavaScript', category: 'frontend', icon: '🟨' },
         { name: 'HTML5', category: 'frontend', icon: '🌐' },
         { name: 'CSS3/SASS', category: 'frontend', icon: '🎨' },
+        { name: 'RESTful API', category: 'frontend', icon: '🔗' },
+        { name: 'NgRX', category: 'frontend', icon: '🔄' },
+        { name: 'Lazy Loading', category: 'frontend', icon: '⏳' },
       ]
     },
     {
